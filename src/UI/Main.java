@@ -29,17 +29,17 @@ public class Main extends Application {
 
         primaryStage.setTitle("Outdraft 0.2.0");
 
-        DraftPane draftPane = new DraftPane(outdraft);
+        WinRateLabel winRateLabel = new WinRateLabel();
+        DraftPane draftPane = new DraftPane(outdraft, winRateLabel);
         HeroGrid heroGrid = new HeroGrid(draftPane);
         PredraftPane predraftPane = new PredraftPane(draftPane, heroGrid);
         RecommendationPane pickRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, true);
         RecommendationPane banRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, false);
-//        WinRateLabel winRateLabel = new WinRateLabel();
 
 
         GridPane rootPane = new GridPane();
-        HBox topPane = new HBox(100);
-        topPane.getChildren().addAll(pickRecommendationPane, banRecommendationPane);
+        HBox topPane = new HBox(10);
+        topPane.getChildren().addAll(pickRecommendationPane, winRateLabel, banRecommendationPane);
 
         rootPane.setAlignment(Pos.CENTER);
         topPane.setAlignment(Pos.CENTER);

@@ -21,6 +21,8 @@ public class DraftPane extends HBox {
     private PickPane highlightedPickPane;
     private HeroImage highlightedImage;
 
+    private WinRateLabel winRateLabel;
+
     private int allyPickCount;
     private int enemyPickCount;
     private int allyBanCount;
@@ -64,6 +66,7 @@ public class DraftPane extends HBox {
                 for (int i = 0; i < 5; ++i) {
                     allyPickPanes[i].setPickAssignment(pickAssignment);
                 }
+                winRateLabel.setWinRate(possiblePick.getWinRate());
             }
             else {
                 PossiblePick possibleBan = outdraft.getPossibleBan(heroName);
@@ -71,6 +74,7 @@ public class DraftPane extends HBox {
                 for (int i = 0; i < 5; ++i) {
                     enemyPickPanes[i].setPickAssignment(pickAssignment);
                 }
+                winRateLabel.setWinRate(1 - possibleBan.getWinRate());
             }
         }
 
@@ -225,12 +229,16 @@ public class DraftPane extends HBox {
         updateHighlighting();
         outdraft.restart();
 
+        winRateLabel.setWinRate(0.5);
+
         runUpdateActions();
     }
 
 
-    public DraftPane(Outdraft outdraft) {
+    public DraftPane(Outdraft outdraft, WinRateLabel winRateLabel) {
         this.outdraft = outdraft;
+        this.winRateLabel = winRateLabel;
+
         draftOrder = new DraftOrder("", true);
         updateActions = new ArrayList<>();
 

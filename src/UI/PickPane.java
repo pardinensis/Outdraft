@@ -5,7 +5,6 @@ import Backend.PickAssignment;
 import Backend.Player;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 
 import java.text.DecimalFormat;
 
@@ -74,20 +73,7 @@ public class PickPane extends GridPane {
         String text = (advantage >= 0) ? "+" : "";
         text += df.format(advantage * 100) + "%";
         advantageLabel.setText(text);
-
-        final Color good = new Color(0, 1, 0, 1);
-        final Color neutral = new Color(1, 1, 1, 1);
-        final Color bad = new Color(1, 0, 0, 1);
-
-        final double maxValue = 0.03;
-        Color mixed;
-        if (advantage < 0) {
-            mixed = neutral.interpolate(bad, -advantage / maxValue);
-        }
-        else {
-            mixed = neutral.interpolate(good, advantage / maxValue);
-        }
-        advantageLabel.setTextFill(mixed);
+        advantageLabel.setTextFill(Tools.ratingToColor(advantage, -0.03, 0.03));
     }
 
     public HeroButton getHeroButton() {
