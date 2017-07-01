@@ -90,7 +90,7 @@ public class PickPane extends GridPane {
         advantageLabel.setTextFill(mixed);
     }
 
-    public HeroImage getHeroImage() {
+    public HeroButton getHeroButton() {
         return heroButton;
     }
 

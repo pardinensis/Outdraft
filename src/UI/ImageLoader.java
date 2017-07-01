@@ -11,6 +11,9 @@ public class ImageLoader {
     private static HashMap<String, Image> horizontal = new HashMap<>();
 
     private static Image get(String heroName, HashMap<String, Image> map, String directory) {
+        if (heroName == null) {
+            heroName = "empty";
+        }
         Image image = map.get(heroName);
         if (image == null) {
             String newImgName = heroName.replace(' ', '_').toLowerCase();

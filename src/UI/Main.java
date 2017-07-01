@@ -38,7 +38,7 @@ public class Main extends Application {
 
 
         GridPane rootPane = new GridPane();
-        HBox topPane = new HBox(30);
+        HBox topPane = new HBox(100);
         topPane.getChildren().addAll(pickRecommendationPane, banRecommendationPane);
 
         rootPane.setAlignment(Pos.CENTER);
@@ -53,10 +53,10 @@ public class Main extends Application {
         draftPane.runUpdateActions();
 
 
-        Scene scene = new Scene(rootPane, 1920, 1080);
+        Scene scene = new Scene(rootPane, 1600, 900);
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setFullScreen(true);
 
         primaryStage.show();
     }

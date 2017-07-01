@@ -147,11 +147,11 @@ public class DraftPane extends HBox {
         switch(currentState) {
             case PICK_ALLY:
                 highlightedPickPane = allyPickPanes[allyPickCount];
-                highlightedImage = highlightedPickPane.getHeroImage();
+                highlightedImage = highlightedPickPane.getHeroButton();
                 break;
             case PICK_ENEMY:
                 highlightedPickPane = enemyPickPanes[enemyPickCount];
-                highlightedImage = highlightedPickPane.getHeroImage();
+                highlightedImage = highlightedPickPane.getHeroButton();
                 break;
             case BAN_ALLY:
                 highlightedPickPane = null;
@@ -254,7 +254,7 @@ public class DraftPane extends HBox {
         for (int i = 0; i < 5; ++i) {
             PickPane pickPane = new PickPane();
             radiantPickGrid.add(pickPane, 4 - i, 0);
-            ((HeroButton)pickPane.getHeroImage()).setHoverAction(() -> {
+            pickPane.getHeroButton().setHoverAction(() -> {
                 setImages(null);
                 setAdvantages(pickPane.getHeroName(), true);
             });
@@ -263,7 +263,7 @@ public class DraftPane extends HBox {
         for (int i = 0; i < 5; ++i) {
             PickPane pickPane = new PickPane();
             direPickGrid.add(pickPane, i, 0);
-            ((HeroButton)pickPane.getHeroImage()).setHoverAction(() -> {
+            pickPane.getHeroButton().setHoverAction(() -> {
                 setImages(null);
                 setAdvantages(pickPane.getHeroName(), false);
             });
