@@ -54,6 +54,8 @@ public class DraftPane extends HBox {
     }
 
     public void hover(String heroName) {
+        setImages(heroName);
+
         final DraftOrder.State currentState = draftOrder.getCurrentState();
         if (currentState == DraftOrder.State.PICK_ALLY || currentState == DraftOrder.State.PICK_ENEMY) {
             if (currentState == DraftOrder.State.PICK_ALLY) {
@@ -71,8 +73,6 @@ public class DraftPane extends HBox {
                 }
             }
         }
-
-        setImages(heroName);
 
         switch (draftOrder.getCurrentState()) {
             case PICK_ALLY:
@@ -106,7 +106,6 @@ public class DraftPane extends HBox {
             return;
         }
 
-        final DraftOrder.State currentState = draftOrder.getCurrentState();
         Hero hero = Heroes.getHeroByName(heroName);
         if (ally) {
             for (int i = 0; i < 5; ++i) {
@@ -124,15 +123,15 @@ public class DraftPane extends HBox {
         }
         else {
             for (int i = 0; i < 5; ++i) {
-                String prevHeroName = enemyPickPanes[i].getHeroName();
-                if (prevHeroName != null) {
-                    enemyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getHeroByName(prevHeroName)));
-                }
-            }
-            for (int i = 0; i < 5; ++i) {
                 String prevHeroName = allyPickPanes[i].getHeroName();
                 if (prevHeroName != null) {
                     allyPickPanes[i].setAdvantage(hero.getMatchup(Heroes.getHeroByName(prevHeroName)));
+                }
+            }
+            for (int i = 0; i < 5; ++i) {
+                String prevHeroName = enemyPickPanes[i].getHeroName();
+                if (prevHeroName != null) {
+                    enemyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getHeroByName(prevHeroName)));
                 }
             }
         }
