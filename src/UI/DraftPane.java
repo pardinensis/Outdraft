@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 
 public class DraftPane extends HBox {
+
     interface UpdateAction {
         void update(DraftOrder.State state);
     }
@@ -58,23 +59,27 @@ public class DraftPane extends HBox {
     public void hover(String heroName) {
         setImages(heroName);
 
+        if (heroName == null) {
+            return;
+        }
+
         final DraftOrder.State currentState = draftOrder.getCurrentState();
         if (currentState == DraftOrder.State.PICK_ALLY || currentState == DraftOrder.State.PICK_ENEMY) {
             if (currentState == DraftOrder.State.PICK_ALLY) {
                 PossiblePick possiblePick = outdraft.getPossiblePick(heroName);
-                PickAssignment pickAssignment = possiblePick.getPickAssignment();
+                PickAssignment pickAssignment = possiblePick.getOwnPickAssignment();
                 for (int i = 0; i < 5; ++i) {
                     allyPickPanes[i].setPickAssignment(pickAssignment);
                 }
-                winRateLabel.setWinRate(possiblePick.rate());
+                winRateLabel.setWinRate(possiblePick.getWinRate());
             }
             else {
                 PossiblePick possibleBan = outdraft.getPossibleBan(heroName);
-                PickAssignment pickAssignment = possibleBan.getPickAssignment();
+                PickAssignment pickAssignment = possibleBan.getEnemyPickAssignment();
                 for (int i = 0; i < 5; ++i) {
                     enemyPickPanes[i].setPickAssignment(pickAssignment);
                 }
-                winRateLabel.setWinRate(1 - possibleBan.rate());
+                winRateLabel.setWinRate(1 - possibleBan.getWinRate());
             }
         }
 
@@ -88,6 +93,12 @@ public class DraftPane extends HBox {
                 setAdvantages(heroName, false);
                 break;
         }
+    }
+
+    public void hoverEnd() {
+        setImages(null);
+        PossiblePick pickAssignment = outdraft.getCurrentState();
+        winRateLabel.setWinRate(pickAssignment.getWinRate());
     }
 
     private void setImages(String heroName) {

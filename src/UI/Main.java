@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private static final String WINDOW_NAME = "Outdraft 0.3.5";
+    private static final String WINDOW_NAME = "Outdraft";
 
     @Override
     public void start(Stage primaryStage) throws Exception{

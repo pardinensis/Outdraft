@@ -40,10 +40,8 @@ public class RecommendationPane extends VBox {
                 heroGrid.setUnavailable(heroButton.getHeroName());
                 draftPane.click(heroButton.getHeroName());
             });
-            heroButton.setHoverAction(() -> {
-                String heroName = heroButton.getHeroName();
-                draftPane.hover(heroName);
-            });
+            heroButton.setHoverAction(() -> draftPane.hover(heroButton.getHeroName()));
+            heroButton.setHoverEndAction(draftPane::hoverEnd);
             heroButtons.add(heroButton);
             gridPane.add(heroButton, i % (N_BUTTONS / N_ROWS), i / (N_BUTTONS / N_ROWS));
         }
@@ -55,8 +53,12 @@ public class RecommendationPane extends VBox {
         ArrayList<PossiblePick> possiblePicks = (this.ally) ? outdraft.ratePicks() : outdraft.rateBans();
         for (int i = 0; i < N_BUTTONS; ++i) {
             HeroButton button = heroButtons.get(i);
-            String heroName = possiblePicks.get(i).getHero().getName();
-            button.setHeroName(heroName);
+            if (i < possiblePicks.size()) {
+                String heroName = possiblePicks.get(i).getHero().getName();
+                button.setHeroName(heroName);
+            } else {
+                button.setHeroName(null);
+            }
             button.setAvailable(true);
         }
 

@@ -11,7 +11,7 @@ public class HeroButton extends HeroImage {
         LARGE
     }
 
-    private Runnable hoverAction;
+    private Runnable hoverAction, hoverEndAction;
     private Rectangle overlay;
     private boolean available;
     private String heroName;
@@ -56,6 +56,9 @@ public class HeroButton extends HeroImage {
                 getStyleClass().add("highlighted");
                 highlighted = false;
             }
+            if (hoverEndAction != null) {
+                hoverEndAction.run();
+            }
         });
 
         available = true;
@@ -76,6 +79,10 @@ public class HeroButton extends HeroImage {
 
     public void setHoverAction(Runnable action) {
         hoverAction = action;
+    }
+
+    public void setHoverEndAction(Runnable action) {
+        hoverEndAction = action;
     }
 
     public void setAvailable(boolean available) {

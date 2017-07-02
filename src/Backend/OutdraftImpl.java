@@ -161,10 +161,12 @@ public class OutdraftImpl implements Outdraft {
 
         for (Hero hero : availableHeroes) {
             PossiblePick possiblePick = getPossiblePick(hero.getName());
-            possiblePicks.add(possiblePick);
+            if (possiblePick != null && possiblePick.getOwnPickAssignment() != null) {
+                possiblePicks.add(possiblePick);
+            }
         }
 
-        possiblePicks.sort((PossiblePick a, PossiblePick b) -> new Double(b.rate()).compareTo(a.rate()));
+        possiblePicks.sort((PossiblePick a, PossiblePick b) -> new Double(b.getWinRate()).compareTo(a.getWinRate()));
         return possiblePicks;
     }
 
@@ -174,10 +176,12 @@ public class OutdraftImpl implements Outdraft {
 
         for (Hero hero : availableHeroes) {
             PossiblePick possibleBan = getPossibleBan(hero.getName());
-            possibleBans.add(possibleBan);
+            if (possibleBan != null && possibleBan.getOwnPickAssignment() != null) {
+                possibleBans.add(possibleBan);
+            }
         }
 
-        possibleBans.sort((PossiblePick a, PossiblePick b) -> new Double(b.rate()).compareTo(a.rate()));
+        possibleBans.sort((PossiblePick a, PossiblePick b) -> new Double(b.getWinRate()).compareTo(a.getWinRate()));
         return possibleBans;
     }
 
@@ -190,9 +194,16 @@ public class OutdraftImpl implements Outdraft {
             Draft d = new Draft(draft);
             d.addOwnHero(hero);
             double winRate = d.calculateExpectedWinRate();
-            PickAssignment pickAssignment = chooseBestPickAssignment(d.getOwnHeroes(), team);
-            possiblePick = new PossiblePick(hero, pickAssignment, winRate);
-            possiblePick.setAdvantage(winRate - d.calculateIndependentWinRate());
+
+            PickAssignment ownPickAssignment = chooseBestPickAssignment(d.getOwnHeroes(), team);
+            if (ownPickAssignment == null)
+                return null;
+
+            PickAssignment enemyPickAssignment = chooseBestPickAssignment(d.getEnemyHeroes(), new Team());
+            if (enemyPickAssignment == null)
+                return null;
+
+            possiblePick = new PossiblePick(hero, ownPickAssignment, enemyPickAssignment, winRate);
             pickCache.put(heroName, possiblePick);
         }
 
@@ -207,14 +218,20 @@ public class OutdraftImpl implements Outdraft {
             Draft d = new Draft(draft);
             d.addEnemyHero(hero);
             double winRate = 1 - d.calculateExpectedWinRate();
-            PickAssignment pickAssignment = chooseBestPickAssignment(d.getEnemyHeroes(), new Team());
-            possibleBan = new PossiblePick(hero, pickAssignment, winRate);
-            possibleBan.setAdvantage(winRate - d.calculateIndependentWinRate());
+            PickAssignment ownPickAssignment = chooseBestPickAssignment(d.getOwnHeroes(), team);
+            PickAssignment enemyPickAssignment = chooseBestPickAssignment(d.getEnemyHeroes(), new Team());
+            possibleBan = new PossiblePick(hero, enemyPickAssignment, ownPickAssignment, winRate);
             banCache.put(heroName, possibleBan);
         }
 
 
         return possibleBan;
+    }
+
+    public PossiblePick getCurrentState() {
+        PickAssignment allyPickAssignment = chooseBestPickAssignment(draft.getOwnHeroes(), team);
+        PickAssignment enemyPickAssignment = chooseBestPickAssignment(draft.getEnemyHeroes(), new Team());
+        return new PossiblePick(null, allyPickAssignment, enemyPickAssignment, draft.calculateExpectedWinRate());
     }
 
     public boolean isAvailable(String heroName) {

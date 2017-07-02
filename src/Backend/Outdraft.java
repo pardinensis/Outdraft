@@ -16,6 +16,7 @@ public interface Outdraft {
     ArrayList<PossiblePick> ratePicks();
     ArrayList<PossiblePick> rateBans();
 
+    PossiblePick getCurrentState();
     PossiblePick getPossiblePick(String heroName);
     PossiblePick getPossibleBan(String heroName);
 
