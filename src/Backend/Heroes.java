@@ -78,12 +78,14 @@ public class Heroes {
         initHeroes();
     }
 
-    public static void initHeroes() {
+    public static boolean initHeroes() {
         heroes = new ArrayList<>();
         heroMap = new HashMap<>();
 
         // load hero list
-        initHeroListFromCache();
+        if (!initHeroListFromCache()) {
+            return false;
+        }
 
         // load positions
         loadPositions();
@@ -109,6 +111,8 @@ public class Heroes {
                 hero.analyzeSynergies();
             }
         }
+
+        return true;
     }
 
     public static Hero getHero(int id) {
@@ -142,7 +146,7 @@ public class Heroes {
         return  true;
     }
 
-    private static void initHeroListFromCache() {
+    private static boolean initHeroListFromCache() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CACHE_HEROES));
             br.readLine(); // drop header
@@ -153,8 +157,9 @@ public class Heroes {
                 assert token.length == 3;
                 addHero(Integer.valueOf(token[0]), token[1], token[2]);
             }
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 

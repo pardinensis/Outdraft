@@ -3,6 +3,7 @@
     -fx-padding: 20;
     -fx-vgap: 10;
     -fx-hgap: 20;
+    -fx-alignment: center;
 }
 
 .hero-button {
@@ -84,10 +85,13 @@
     -fx-text-fill: #CCCCCC;
     -fx-font-size: 16px;
     -fx-background-color: #111111;
-    -fx-min-width: 116;
-    -fx-max-width: 116;
     -fx-padding: 2;
     -fx-alignment: center;
+}
+
+.pick-label {
+    -fx-min-width: 116;
+    -fx-max-width: 116;
 }
 
 .label-bold {
@@ -97,8 +101,8 @@
 .win-rate-label {
     -fx-font-size: 24px;
     -fx-background-color: #222222;
-    -fx-mix-width: 220;
-    -fx-max-width: 220;
+    -fx-min-width: 112;
+    -fx-max-width: 112;
     -fx-min-height: 80;
     -fx-max-height: 80;
 }

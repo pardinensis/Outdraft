@@ -19,6 +19,7 @@ public class PickPane extends GridPane {
         heroName = null;
 
         advantageLabel = new Label("");
+        advantageLabel.getStyleClass().addAll("pick-label");
         add(advantageLabel, 0, 0);
 
         heroButton = new HeroButton("empty", HeroButton.ImageType.LARGE);
@@ -27,11 +28,11 @@ public class PickPane extends GridPane {
         getStyleClass().add("pick-pane");
 
         playerLabel = new Label("");
-        playerLabel.getStyleClass().addAll("label", "label-bold");
+        playerLabel.getStyleClass().addAll("pick-label", "label-bold");
         add(playerLabel, 0, 2);
 
         positionLabel = new Label("");
-        positionLabel.getStyleClass().add("label");
+        positionLabel.getStyleClass().addAll("pick-label");
         add(positionLabel, 0, 3);
     }
 

@@ -14,7 +14,12 @@ public class OutdraftImpl implements Outdraft {
     private LinkedList<Runnable> undoMoves;
 
     public OutdraftImpl() {
-        Heroes.initHeroes();
+    }
+
+    public boolean init() {
+        if (!Heroes.initHeroes()) {
+            return false;
+        }
 
         pickCache = new HashMap<>();
         banCache = new HashMap<>();
@@ -22,6 +27,8 @@ public class OutdraftImpl implements Outdraft {
         undoMoves = new LinkedList<>();
 
         draft = new Draft();
+
+        return true;
     }
 
 
