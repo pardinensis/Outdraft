@@ -27,7 +27,7 @@ public class Main extends Application {
         outdraft.setTeam(team);
         outdraft.restart();
 
-        primaryStage.setTitle("Outdraft 0.2.0");
+        primaryStage.setTitle("Outdraft 0.3.3");
 
         WinRateLabel winRateLabel = new WinRateLabel();
         DraftPane draftPane = new DraftPane(outdraft, winRateLabel);

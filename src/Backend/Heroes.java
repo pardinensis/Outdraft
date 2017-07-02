@@ -16,7 +16,7 @@ public class Heroes {
     private static ArrayList<Hero> heroes;
     private static HashMap<String, Integer> heroMap;
 
-    private static boolean updateNecessary() {
+    private static boolean checkUpdateTimestamp() {
         boolean updateNecessary = false;
         long daysSinceEpoch = ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
         try {
@@ -27,26 +27,28 @@ public class Heroes {
         } catch (FileNotFoundException e) {
             updateNecessary = true;
         }
-
-        if (updateNecessary) {
-            try {
-                Writer writer = new FileWriter(new File(Resources.FILENAME_CACHE_UPDATE_TIMESTAMP));
-                writer.write(String.valueOf(daysSinceEpoch));
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         return updateNecessary;
     }
 
+    private static void writeUpdateTimestamp() {
+        long daysSinceEpoch = ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
+        try {
+            Writer writer = new FileWriter(new File(Resources.FILENAME_CACHE_UPDATE_TIMESTAMP));
+            writer.write(String.valueOf(daysSinceEpoch));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void updateCache() {
-        if (!updateNecessary())
+        if (!checkUpdateTimestamp())
             return;
 
         heroes = new ArrayList<>();
         heroMap = new HashMap<>();
+
+        boolean updateFailed = false;
 
         // load hero list
         if (initHeroListFromAPI())
@@ -54,12 +56,24 @@ public class Heroes {
 
         // load public win rates and popularity
         int mmrBracket = loadMMRBracket();
-        if (loadWinRatesAndPopularityFromDotabuff(mmrBracket))
+        if (loadWinRatesAndPopularityFromDotabuff(mmrBracket)) {
             writeWinRatesAndPopularityToCache();
+        }
+        else {
+            updateFailed = true;
+        }
 
         // load matchups
-        if (loadMatchupsFromDotabuff())
+        if (loadMatchupsFromDotabuff()) {
             writeMatchupsToCache();
+        }
+        else {
+            updateFailed = true;
+        }
+
+        if (!updateFailed) {
+            writeUpdateTimestamp();
+        }
 
         initHeroes();
     }
@@ -291,7 +305,8 @@ public class Heroes {
             }
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Could not connect to Dotabuff");
+//            e.printStackTrace();
         }
         return false;
     }
