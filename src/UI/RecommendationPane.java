@@ -2,14 +2,17 @@ package UI;
 
 import Backend.Outdraft;
 import Backend.PossiblePick;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class RecommendationPane extends StackPane {
-    private static final int N_BUTTONS = 20;
-    private static final int N_ROWS = 2;
+public class RecommendationPane extends VBox {
+    private static final int N_BUTTONS = 24;
+    private static final int N_ROWS = 3;
 
     ArrayList<HeroButton> heroButtons;
     Outdraft outdraft;
@@ -19,9 +22,16 @@ public class RecommendationPane extends StackPane {
         this.outdraft = outdraft;
         this.ally = ally;
 
+        getStyleClass().add("recommendation-pane");
+
+        Label descriptionLabel = new Label((ally) ? "Suggested Picks" : "Suggested Bans");
+        getChildren().add(descriptionLabel);
+
         GridPane gridPane = new GridPane();
-        gridPane.getStyleClass().add("recommendation-pane");
+        gridPane.getStyleClass().add("recommendation-grid");
         getChildren().add(gridPane);
+
+        setAlignment(Pos.CENTER);
 
         heroButtons = new ArrayList<>();
         for (int i = 0; i < N_BUTTONS; ++i) {

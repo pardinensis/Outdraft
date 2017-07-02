@@ -145,7 +145,7 @@ public class HeroGrid extends GridPane {
     private void addHero(GridPane pane, String heroName) {
         final int width = 21;
         int index = pane.getChildren().size();
-        HeroButton heroButton = new HeroButton(heroName, HeroButton.ImageType.SMALL);
+        HeroButton heroButton = new HeroButton(heroName, HeroButton.ImageType.HORIZONTAL);
         heroButton.setClickAction(() -> draftPane.click(heroButton.getHeroName()));
         heroButton.setHoverAction(() -> {
             draftPane.hover(heroName);

@@ -3,19 +3,19 @@ package UI;
 import Backend.*;
 
 import javafx.application.Application;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
 public class Main extends Application {
 
-    private static final String WINDOW_NAME = "Outdraft 0.3.3";
+    private static final String WINDOW_NAME = "Outdraft 0.3.4";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -46,8 +46,10 @@ public class Main extends Application {
 
 
         GridPane rootPane = new GridPane();
-        HBox topPane = new HBox(10);
+        HBox topPane = new HBox(25);
         topPane.getChildren().addAll(pickRecommendationPane, winRateLabel, banRecommendationPane);
+        Separator separator = new Separator(Orientation.HORIZONTAL);
+        separator.setValignment(VPos.CENTER);
 
         rootPane.setAlignment(Pos.CENTER);
         topPane.setAlignment(Pos.CENTER);
@@ -56,7 +58,8 @@ public class Main extends Application {
         rootPane.add(predraftPane, 0, 0 );
         rootPane.add(draftPane, 0, 1);
         rootPane.add(topPane, 0, 2);
-        rootPane.add(heroGrid, 0, 3);
+        rootPane.add(separator, 0, 3);
+        rootPane.add(heroGrid, 0, 4);
 
         draftPane.runUpdateActions();
 
