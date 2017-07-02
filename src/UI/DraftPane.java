@@ -66,7 +66,7 @@ public class DraftPane extends HBox {
                 for (int i = 0; i < 5; ++i) {
                     allyPickPanes[i].setPickAssignment(pickAssignment);
                 }
-                winRateLabel.setWinRate(possiblePick.getWinRate());
+                winRateLabel.setWinRate(possiblePick.rate());
             }
             else {
                 PossiblePick possibleBan = outdraft.getPossibleBan(heroName);
@@ -74,7 +74,7 @@ public class DraftPane extends HBox {
                 for (int i = 0; i < 5; ++i) {
                     enemyPickPanes[i].setPickAssignment(pickAssignment);
                 }
-                winRateLabel.setWinRate(1 - possibleBan.getWinRate());
+                winRateLabel.setWinRate(1 - possibleBan.rate());
             }
         }
 
