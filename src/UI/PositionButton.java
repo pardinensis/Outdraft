@@ -1,6 +1,5 @@
 package UI;
 
-import Backend.Player;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
@@ -13,7 +12,7 @@ public class PositionButton extends Button {
             new Color(0.0, 1.0, 0.0, 1.0),
             new Color(0.6, 0.8, 0.2, 1.0),
             new Color(1.0, 1.0, 0.2, 1.0),
-            new Color(0.8, 0.5, 0.2, 1.0),
+            new Color(0.9, 0.4, 0.2, 1.0),
             new Color(0.8, 0.0, 0.2, 1.0),
             new Color(0.2, 0.2, 0.2, 1.0)
     };

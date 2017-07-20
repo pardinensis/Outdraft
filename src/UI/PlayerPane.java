@@ -16,6 +16,7 @@ public class PlayerPane {
     private Player player;
 
     private CheckBox checkBox;
+    private boolean selectable;
     private TextField idField;
     private Label nameLabel;
     private PositionButton[] positions;
@@ -27,6 +28,7 @@ public class PlayerPane {
 
         checkBox = new CheckBox();
         grid.add(checkBox, 0, row);
+        checkBox.setDisable(player == null);
         checkBox.setOnAction((ActionEvent) -> saveCallback());
 
         idField = new TextField();
@@ -62,7 +64,23 @@ public class PlayerPane {
         }
         player.setPlaying(checkBox.isSelected());
         player.setPositionsString(new String(cs));
+
+        updateCheckBoxes();
     }
+
+    private void updateCheckBoxes() {
+        int nSelected = 0;
+        for (PlayerPane playerPane : playerPanes) {
+            if (playerPane.checkBox.isSelected()) {
+                ++nSelected;
+            }
+        }
+        for (PlayerPane playerPane : playerPanes) {
+            boolean selectable = (nSelected < 5 && playerPane.player != null) || playerPane.checkBox.isSelected();
+            playerPane.checkBox.setDisable(!selectable);
+        }
+    }
+
 
     private void update() {
         if (player == null) {
@@ -104,6 +122,7 @@ public class PlayerPane {
         }
 
         updateTeam();
+        updateCheckBoxes();
     }
 
 
