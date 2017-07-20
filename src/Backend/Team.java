@@ -8,7 +8,6 @@ public class Team {
 
     public Team() {
         players = new ArrayList<>();
-//        loadFromCache();
     }
 
     public ArrayList<Player> getPlayers() {

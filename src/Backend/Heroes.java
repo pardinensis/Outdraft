@@ -112,6 +112,20 @@ public class Heroes {
             }
         }
 
+        try {
+            String filename = "synergies.txt";
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            for (Hero hero : heroes) {
+                if (hero == null) continue;
+                bw.write(hero.getBestSynergyStr());
+                bw.newLine();
+            }
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 

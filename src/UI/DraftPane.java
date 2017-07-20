@@ -64,23 +64,26 @@ public class DraftPane extends HBox {
         }
 
         final DraftOrder.State currentState = draftOrder.getCurrentState();
-        if (currentState == DraftOrder.State.PICK_ALLY || currentState == DraftOrder.State.PICK_ENEMY) {
-            if (currentState == DraftOrder.State.PICK_ALLY) {
+        PickAssignment pickAssignment;
+        switch(draftOrder.getCurrentState()) {
+            case PICK_ALLY:
+            case BAN_ENEMY:
                 PossiblePick possiblePick = outdraft.getPossiblePick(heroName);
-                PickAssignment pickAssignment = possiblePick.getOwnPickAssignment();
+                pickAssignment = possiblePick.getOwnPickAssignment();
                 for (int i = 0; i < 5; ++i) {
                     allyPickPanes[i].setPickAssignment(pickAssignment);
                 }
                 winRateLabel.setWinRate(possiblePick.getWinRate());
-            }
-            else {
+                break;
+            case PICK_ENEMY:
+            case BAN_ALLY:
                 PossiblePick possibleBan = outdraft.getPossibleBan(heroName);
-                PickAssignment pickAssignment = possibleBan.getEnemyPickAssignment();
+                pickAssignment = possibleBan.getEnemyPickAssignment();
                 for (int i = 0; i < 5; ++i) {
                     enemyPickPanes[i].setPickAssignment(pickAssignment);
                 }
                 winRateLabel.setWinRate(1 - possibleBan.getWinRate());
-            }
+                break;
         }
 
         switch (draftOrder.getCurrentState()) {

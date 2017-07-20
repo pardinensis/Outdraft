@@ -3,13 +3,12 @@ package UI;
 import Backend.*;
 
 import javafx.application.Application;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.*;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -36,35 +35,38 @@ public class Main extends Application {
         outdraft.setTeam(team);
         outdraft.restart();
 
+        Tab teamTab = new Tab("Team", new TeamTab(team));
+        teamTab.setClosable(false);
 
-        WinRateLabel winRateLabel = new WinRateLabel();
-        DraftPane draftPane = new DraftPane(outdraft, winRateLabel);
-        HeroGrid heroGrid = new HeroGrid(draftPane);
-        PredraftPane predraftPane = new PredraftPane(draftPane, heroGrid);
-        RecommendationPane pickRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, true);
-        RecommendationPane banRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, false);
+        Tab draftTab = new Tab("Draft", new DraftTab(outdraft));
+        draftTab.setClosable(false);
 
+        TabPane tabPane = new TabPane();
+        tabPane.getTabs().addAll(teamTab, draftTab);
 
-        GridPane rootPane = new GridPane();
-        HBox topPane = new HBox(25);
-        topPane.getChildren().addAll(pickRecommendationPane, winRateLabel, banRecommendationPane);
-        Separator separator = new Separator(Orientation.HORIZONTAL);
-        separator.setValignment(VPos.CENTER);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                final StackPane region = (StackPane) tabPane.lookup(".headers-region");
+                final StackPane regionTop = (StackPane) tabPane.lookup(".tab-pane:top *.tab-header-area");
+                regionTop.widthProperty().addListener(new ChangeListener<Number>() {
 
-        rootPane.setAlignment(Pos.CENTER);
-        topPane.setAlignment(Pos.CENTER);
-        heroGrid.setAlignment(Pos.CENTER);
+                    @Override
+                    public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+                        Insets in = regionTop.getPadding();
+                        regionTop.setPadding(new Insets(
+                                in.getTop(),
+                                in.getRight(),
+                                in.getBottom(),
+                                arg2.doubleValue() / 2 - region.getWidth() / 2));
+                    }
+                });
+                // force re-layout so the tabs aligned to center at initial state
+                primaryStage.setWidth(primaryStage.getWidth() + 1);
+            }
+        });
 
-        rootPane.add(predraftPane, 0, 0 );
-        rootPane.add(draftPane, 0, 1);
-        rootPane.add(topPane, 0, 2);
-        rootPane.add(separator, 0, 3);
-        rootPane.add(heroGrid, 0, 4);
-
-        draftPane.runUpdateActions();
-
-
-        Scene scene = new Scene(rootPane, 1600, 900);
+        Scene scene = new Scene(tabPane, 1600, 900);
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle(WINDOW_NAME);

@@ -27,7 +27,7 @@ public class Player {
         if (id > 0) {
             if (!loadFromCache()) {
                 loadFromDotabuff();
-                writeToCache();
+                writeHeroPoolToCache();
             }
         }
     }
@@ -48,9 +48,10 @@ public class Player {
     public void setPositionsString(String positionsStr) {
         assert positionsStr.length() == 5;
         positions = positionsStr;
+        writePositionsToCache();
     }
 
-    private String getPositionsString() {
+    public String getPositionsString() {
         return positions;
     }
 
@@ -83,7 +84,8 @@ public class Player {
             String[] token = line.split(",");
             assert token.length == 2;
             name = token[0];
-            setPositionsString(token[1]);
+            assert token[1].length() == 5;
+            positions = token[1];
 
             return true;
         } catch (IOException ioex) {
@@ -91,7 +93,7 @@ public class Player {
         }
     }
 
-    private void writeToCache() {
+    private void writeHeroPoolToCache() {
         try {
             String filename = Resources.DIRNAME_CACHE_PLAYERS + id + "_heroes.csv";
             BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
@@ -102,9 +104,15 @@ public class Player {
                 bw.newLine();
             }
             bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            filename = Resources.DIRNAME_CACHE_PLAYERS + id + ".csv";
-            bw = new BufferedWriter(new FileWriter(filename));
+    private void writePositionsToCache() {
+        try {
+            String filename = Resources.DIRNAME_CACHE_PLAYERS + id + ".csv";
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
             bw.write("Name,Positions");
             bw.newLine();
             bw.write(name + "," + getPositionsString());

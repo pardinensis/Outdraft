@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class RecommendationPane extends VBox {
-    private static final int N_BUTTONS = 24;
+    private static final int N_BUTTONS = 27;
     private static final int N_ROWS = 3;
 
     ArrayList<HeroButton> heroButtons;

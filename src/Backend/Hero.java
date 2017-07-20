@@ -194,6 +194,20 @@ public class Hero {
         }
     }
 
+    public String getBestSynergyStr() {
+        int ally = -1;
+        double bestSynergy = Double.NEGATIVE_INFINITY;
+        for (int teammateId = 0; teammateId < synergies.size(); ++teammateId) {
+            double syn = synergies.get(teammateId);
+            if (syn > bestSynergy) {
+                bestSynergy = syn;
+                ally = teammateId;
+            }
+        }
+
+        return name + " + " + Heroes.getHero(ally).getName() + ": " + bestSynergy;
+    }
+
     public double getSynergy(Hero other) {
         if (other.getId() == id) {
             return 0;
