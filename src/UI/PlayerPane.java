@@ -1,22 +1,36 @@
 package UI;
 
 import Backend.Player;
+import Backend.Team;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
+
 
 public class PlayerPane {
+    private Team team;
+    private PlayerPane[] playerPanes;
+    private Player player;
+
+    private CheckBox checkBox;
     private TextField idField;
     private Label nameLabel;
-    private Player player;
     private PositionButton[] positions;
 
-    public PlayerPane(Player player, GridPane grid, int row) {
+    public PlayerPane(Team team, PlayerPane[] playerPanes, Player player, GridPane grid, int row) {
+        this.team = team;
+        this.playerPanes = playerPanes;
         this.player = player;
 
+        checkBox = new CheckBox();
+        grid.add(checkBox, 0, row);
+        checkBox.setOnAction((ActionEvent) -> saveCallback());
+
         idField = new TextField();
-        grid.add(idField, 0, row);
+        grid.add(idField, 1, row);
         idField.setOnAction((ActionEvent) -> parseId());
         idField.focusedProperty().addListener((observableValue, oldProp, newProp) -> {
             if (!newProp) {
@@ -25,7 +39,7 @@ public class PlayerPane {
         });
 
         nameLabel = new Label("");
-        grid.add(nameLabel, 1, row);
+        grid.add(nameLabel, 2, row);
         nameLabel.getStyleClass().add("name-label");
 
         positions = new PositionButton[5];
@@ -35,7 +49,7 @@ public class PlayerPane {
                 familiarity = player.getPositionsString().charAt(i) - 'a';
             }
             positions[i] = new PositionButton(i, familiarity, this::saveCallback);
-            grid.add(positions[i], 2 + i, row);
+            grid.add(positions[i], 3 + i, row);
         }
 
         update();
@@ -46,11 +60,13 @@ public class PlayerPane {
         for (int i = 0; i < 5; ++i) {
             cs[i] = (char)('a' + positions[i].getFamiliarity());
         }
+        player.setPlaying(checkBox.isSelected());
         player.setPositionsString(new String(cs));
     }
 
     private void update() {
         if (player == null) {
+            checkBox.setSelected(false);
             idField.setText("");
             nameLabel.setText("");
             for (int i = 0; i < 5; ++i) {
@@ -59,6 +75,7 @@ public class PlayerPane {
             return;
         }
 
+        checkBox.setSelected(player.isPlaying());
         idField.setText("" + player.getId());
         nameLabel.setText(player.getName());
         String positionStr = player.getPositionsString();
@@ -74,15 +91,35 @@ public class PlayerPane {
             player = null;
             update();
         }
-
-        try {
-            long id = Long.parseLong(input);
-            if (id > 0) {
-                player = new Player(id);
-                update();
+        else {
+            try {
+                long id = Long.parseLong(input);
+                if (id > 0) {
+                    player = new Player(id);
+                    update();
+                }
+            } catch (NumberFormatException nfex) {
+                // do nothing
             }
-        } catch (NumberFormatException nfex) {
-            // do nothing
         }
+
+        updateTeam();
+    }
+
+
+    private void updateTeam() {
+        ArrayList<Player> players = new ArrayList<>();
+        for (PlayerPane playerPane : playerPanes) {
+            Player player = playerPane.getPlayer();
+            if (player != null) {
+                players.add(player);
+            }
+        }
+        team.setPlayers(players);
+        team.writeToCache();
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

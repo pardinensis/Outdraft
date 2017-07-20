@@ -10,8 +10,22 @@ public class Team {
         players = new ArrayList<>();
     }
 
-    public ArrayList<Player> getPlayers() {
+    public ArrayList<Player> getActivePlayers() {
+        ArrayList<Player> activePlayers = new ArrayList<>();
+        for (Player player : players) {
+            if (player.isPlaying()) {
+                activePlayers.add(player);
+            }
+        }
+        return activePlayers;
+    }
+
+    public ArrayList<Player> getAllPlayers() {
         return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
     }
 
     public void loadFromCache() {
@@ -30,7 +44,7 @@ public class Team {
         }
     }
 
-    private void writeToCache() {
+    public void writeToCache() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(Resources.FILENAME_CONFIG_TEAM));
             for (Player player : players) {

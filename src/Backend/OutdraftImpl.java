@@ -115,7 +115,7 @@ public class OutdraftImpl implements Outdraft {
 
 
     public ArrayList<PickAssignment> generatePickAssignments(ArrayList<Hero> heroes, Team team) {
-        ArrayList<Player> players = team.getPlayers();
+        ArrayList<Player> players = team.getActivePlayers();
         final int nHeroes = heroes.size();
         final int nPlayers = players.size();
         ArrayList<String> heroPermutations = generatePermutations(nHeroes);

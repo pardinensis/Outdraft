@@ -15,6 +15,7 @@ public class Player {
     private ArrayList<Integer> heroWins;
     private int totalWins;
     private String positions;
+    private boolean playing;
 
 
     public Player(long id) {
@@ -23,6 +24,7 @@ public class Player {
         heroWins = new ArrayList<>();
         totalWins = 0;
         positions = "aaaaa";
+        playing = false;
 
         if (id > 0) {
             if (!loadFromCache()) {
@@ -82,10 +84,11 @@ public class Player {
             line = br.readLine();
             assert(line != null);
             String[] token = line.split(",");
-            assert token.length == 2;
+            assert token.length == 3;
             name = token[0];
             assert token[1].length() == 5;
             positions = token[1];
+            playing = token[2].equals("y");
 
             return true;
         } catch (IOException ioex) {
@@ -113,9 +116,9 @@ public class Player {
         try {
             String filename = Resources.DIRNAME_CACHE_PLAYERS + id + ".csv";
             BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
-            bw.write("Name,Positions");
+            bw.write("Name,Positions,Playing");
             bw.newLine();
-            bw.write(name + "," + getPositionsString());
+            bw.write(name + "," + getPositionsString() + "," + ((playing) ? "y" : "n"));
             bw.newLine();
             bw.close();
         } catch (IOException e) {
@@ -156,6 +159,14 @@ public class Player {
     @Override
     public String toString() {
         return name;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+
+    public boolean isPlaying() {
+        return playing;
     }
 }
 

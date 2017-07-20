@@ -30,8 +30,6 @@ public class Main extends Application {
         Team team = new Team();
         team.loadFromCache();
 
-        System.out.println(team.getPlayers());
-
         outdraft.setTeam(team);
         outdraft.restart();
 

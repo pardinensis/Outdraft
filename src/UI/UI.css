@@ -186,3 +186,24 @@
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
 }
+
+.check-box .box {
+    -fx-background-color: #222222;
+    -fx-border-radius: 3px;
+    -fx-border-color: #444444;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-background-radius: 3px, 3px, 2px, 1px;
+    -fx-padding: 8px;
+}
+
+.check-box .mark {
+    -fx-padding: 8px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #CCCCCC;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #222222;
+}
