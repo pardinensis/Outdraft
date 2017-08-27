@@ -39,32 +39,25 @@ public class Main extends Application {
         Tab draftTab = new Tab("Draft", new DraftTab(outdraft));
         draftTab.setClosable(false);
 
-        Tab dataTab = new Tab("Heroes", new DataTab());
+        Tab dataTab = new Tab("Hero Positions", new DataTab());
         dataTab.setClosable(false);
 
         TabPane tabPane = new TabPane();
         tabPane.getTabs().addAll(teamTab, draftTab, dataTab);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                final StackPane region = (StackPane) tabPane.lookup(".headers-region");
-                final StackPane regionTop = (StackPane) tabPane.lookup(".tab-pane:top *.tab-header-area");
-                regionTop.widthProperty().addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-                        Insets in = regionTop.getPadding();
-                        regionTop.setPadding(new Insets(
-                                in.getTop(),
-                                in.getRight(),
-                                in.getBottom(),
-                                arg2.doubleValue() / 2 - region.getWidth() / 2));
-                    }
-                });
-                // force re-layout so the tabs aligned to center at initial state
-                primaryStage.setWidth(primaryStage.getWidth() + 1);
-            }
+        Platform.runLater(() -> {
+            final StackPane region = (StackPane) tabPane.lookup(".headers-region");
+            final StackPane regionTop = (StackPane) tabPane.lookup(".tab-pane:top *.tab-header-area");
+            regionTop.widthProperty().addListener((arg0, arg1, arg2) -> {
+                Insets in = regionTop.getPadding();
+                regionTop.setPadding(new Insets(
+                        in.getTop(),
+                        in.getRight(),
+                        in.getBottom(),
+                        arg2.doubleValue() / 2 - region.getWidth() / 2));
+            });
+            // force re-layout so the tabs aligned to center at initial state
+            primaryStage.setWidth(primaryStage.getWidth() + 1);
         });
 
         Scene scene = new Scene(tabPane, 1600, 900);

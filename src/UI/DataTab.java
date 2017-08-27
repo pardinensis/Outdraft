@@ -3,7 +3,6 @@ package UI;
 import Backend.Hero;
 import Backend.Heroes;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
