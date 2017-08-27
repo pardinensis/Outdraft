@@ -134,6 +134,11 @@
     -fx-font-weight: bold;
 }
 
+.status-label {
+    -fx-background-color: #222222;
+    -fx-alignment: center-left;
+}
+
 .win-rate-label {
     -fx-font-size: 24px;
     -fx-background-color: #222222;

@@ -132,7 +132,7 @@ public class Hero {
 
     public double getWinRateWith(int teammateId) {
         double myWR = winRate;
-        double tmWR = Heroes.getHero(teammateId).getWinRate();
+        double tmWR = Heroes.getInstance().getHero(teammateId).getWinRate();
         double expectedWR = (myWR * tmWR) / (myWR * tmWR + (1 - myWR) * (1 - tmWR));
 //        System.out.println("Synergy " + name + " " + Heroes.getHero(teammateId).getName() + ": " + synergies.get(teammateId));
         return expectedWR + synergies.get(teammateId);
@@ -140,7 +140,7 @@ public class Hero {
 
     public double getWinRateAgainst(int opponentId) {
         double myWR = winRate;
-        double oppWR = Heroes.getHero(opponentId).getWinRate();
+        double oppWR = Heroes.getInstance().getHero(opponentId).getWinRate();
         double expectedWR = (myWR * (1 - oppWR)) / (myWR * (1 - oppWR) + oppWR * (1 - myWR));
 //        System.out.println("Matchup " + name + " " + Heroes.getHero(opponentId).getName() + ": " + matchups.get(opponentId));
         return expectedWR + matchups.get(opponentId);
@@ -167,7 +167,7 @@ public class Hero {
     public void analyzeMatchups() {
         for (int opponentId = 0; opponentId < matchupsWon.size(); ++opponentId) {
             if (opponentId == id) continue;
-            Hero opponent = Heroes.getHero(opponentId);
+            Hero opponent = Heroes.getInstance().getHero(opponentId);
             if (opponent == null) continue;
 
             double myWR = matchupsTotalWinRate;
@@ -185,7 +185,7 @@ public class Hero {
     public void analyzeSynergies() {
         for (int teammateId = 0; teammateId < synergiesWon.size(); ++teammateId) {
             if (teammateId == id) continue;
-            Hero teammate = Heroes.getHero(teammateId);
+            Hero teammate = Heroes.getInstance().getHero(teammateId);
             if (teammate == null) continue;
 
             double myWR = synergiesTotalWinRate;
@@ -211,7 +211,7 @@ public class Hero {
             }
         }
 
-        return name + " + " + Heroes.getHero(ally).getName() + ": " + bestSynergy;
+        return name + " + " + Heroes.getInstance().getHero(ally).getName() + ": " + bestSynergy;
     }
 
     public double getSynergy(Hero other) {

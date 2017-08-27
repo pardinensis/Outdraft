@@ -124,18 +124,18 @@ public class DraftPane extends HBox {
             return;
         }
 
-        Hero hero = Heroes.getHeroByName(heroName);
+        Hero hero = Heroes.getInstance().getHeroByName(heroName);
         if (ally) {
             for (int i = 0; i < 5; ++i) {
                 String prevHeroName = allyPickPanes[i].getHeroName();
                 if (prevHeroName != null) {
-                    allyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getHeroByName(prevHeroName)));
+                    allyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getInstance().getHeroByName(prevHeroName)));
                 }
             }
             for (int i = 0; i < 5; ++i) {
                 String prevHeroName = enemyPickPanes[i].getHeroName();
                 if (prevHeroName != null) {
-                    enemyPickPanes[i].setAdvantage(hero.getMatchup(Heroes.getHeroByName(prevHeroName)));
+                    enemyPickPanes[i].setAdvantage(hero.getMatchup(Heroes.getInstance().getHeroByName(prevHeroName)));
                 }
             }
         }
@@ -143,13 +143,13 @@ public class DraftPane extends HBox {
             for (int i = 0; i < 5; ++i) {
                 String prevHeroName = allyPickPanes[i].getHeroName();
                 if (prevHeroName != null) {
-                    allyPickPanes[i].setAdvantage(hero.getMatchup(Heroes.getHeroByName(prevHeroName)));
+                    allyPickPanes[i].setAdvantage(hero.getMatchup(Heroes.getInstance().getHeroByName(prevHeroName)));
                 }
             }
             for (int i = 0; i < 5; ++i) {
                 String prevHeroName = enemyPickPanes[i].getHeroName();
                 if (prevHeroName != null) {
-                    enemyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getHeroByName(prevHeroName)));
+                    enemyPickPanes[i].setAdvantage(hero.getSynergy(Heroes.getInstance().getHeroByName(prevHeroName)));
                 }
             }
         }

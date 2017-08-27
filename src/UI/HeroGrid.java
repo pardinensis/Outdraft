@@ -26,15 +26,15 @@ public class HeroGrid extends GridPane {
         add(agilityHeroes, 0, 1);
         add(intelligenceHeroes, 0, 2);
 
-        ArrayList<Hero> strengthHeroList = Heroes.getStrengthHeroes();
+        ArrayList<Hero> strengthHeroList = Heroes.getInstance().getStrengthHeroes();
         for (Hero hero : strengthHeroList) {
             addHero(strengthHeroes, hero.getName());
         }
-        ArrayList<Hero> agilityHeroList = Heroes.getAgilityHeroes();
+        ArrayList<Hero> agilityHeroList = Heroes.getInstance().getAgilityHeroes();
         for (Hero hero : agilityHeroList) {
             addHero(agilityHeroes, hero.getName());
         }
-        ArrayList<Hero> intelligenceHeroList = Heroes.getIntelligenceHeroes();
+        ArrayList<Hero> intelligenceHeroList = Heroes.getInstance().getIntelligenceHeroes();
         for (Hero hero : intelligenceHeroList) {
             addHero(intelligenceHeroes, hero.getName());
         }

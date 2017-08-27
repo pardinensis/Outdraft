@@ -36,9 +36,9 @@ public class DataTab extends GridPane {
 
             ArrayList<Hero> heroes;
             switch (col) {
-                case 0: heroes = Heroes.getStrengthHeroes(); break;
-                case 1: heroes = Heroes.getAgilityHeroes(); break;
-                case 2: heroes = Heroes.getIntelligenceHeroes(); break;
+                case 0: heroes = Heroes.getInstance().getStrengthHeroes(); break;
+                case 1: heroes = Heroes.getInstance().getAgilityHeroes(); break;
+                case 2: heroes = Heroes.getInstance().getIntelligenceHeroes(); break;
                 default: return;
             }
             heroDataPanes = new ArrayList<>();

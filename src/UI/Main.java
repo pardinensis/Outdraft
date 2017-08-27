@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -25,8 +26,6 @@ public class Main extends Application {
             return;
         }
 
-        Heroes.updateCache();
-
         Team team = new Team();
         team.loadFromCache();
 
@@ -45,6 +44,12 @@ public class Main extends Application {
         TabPane tabPane = new TabPane();
         tabPane.getTabs().addAll(teamTab, draftTab, dataTab);
 
+        StatusBar statusBar = new StatusBar();
+
+        BorderPane mainPane = new BorderPane();
+        mainPane.setCenter(tabPane);
+        mainPane.setBottom(statusBar);
+
         Platform.runLater(() -> {
             final StackPane region = (StackPane) tabPane.lookup(".headers-region");
             final StackPane regionTop = (StackPane) tabPane.lookup(".tab-pane:top *.tab-header-area");
@@ -60,13 +65,26 @@ public class Main extends Application {
             primaryStage.setWidth(primaryStage.getWidth() + 1);
         });
 
-        Scene scene = new Scene(tabPane, 1600, 900);
+        Scene scene = new Scene(mainPane, 1600, 900);
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle(WINDOW_NAME);
 //        primaryStage.setFullScreen(true);
 
         primaryStage.show();
+
+        final Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Heroes.updateCache(this::updateMessage);
+                return null;
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+        statusBar.getStatusLabel().textProperty().bind(task.messageProperty());
     }
 
     private void showErrorMessage(Stage primaryStage, String message) {

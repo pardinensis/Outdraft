@@ -62,7 +62,7 @@ public class Player {
     }
 
     private boolean loadFromCache() {
-        heroWins = new ArrayList<>(Collections.nCopies(Heroes.getHeroesUpperBound(), 0));
+        heroWins = new ArrayList<>(Collections.nCopies(Heroes.getInstance().getHeroesUpperBound(), 0));
         try {
             String filename = Resources.DIRNAME_CACHE_PLAYERS + id + "_heroes.csv";
             BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -127,7 +127,7 @@ public class Player {
     }
 
     private boolean loadFromDotabuff() {
-        heroWins = new ArrayList<>(Collections.nCopies(Heroes.getHeroesUpperBound(), 0));
+        heroWins = new ArrayList<>(Collections.nCopies(Heroes.getInstance().getHeroesUpperBound(), 0));
         try {
             String url = Resources.DOTABUFF_GET_HEROPOOL_1 + id + Resources.DOTABUFF_GET_HEROPOOL_2;
             Document doc = Jsoup.connect(url).get();
@@ -144,7 +144,7 @@ public class Player {
                         int matches = new Integer(row.child(2).attr("data-value"));
                         double winrate = new Double(row.child(3).attr("data-value"));
                         int wins = (int) Math.round(matches * (winrate / 100.));
-                        Hero hero = Heroes.getHeroByName(heroStr);
+                        Hero hero = Heroes.getInstance().getHeroByName(heroStr);
                         heroWins.set(hero.getId(), wins);
                     }
                 }

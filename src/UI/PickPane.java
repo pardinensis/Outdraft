@@ -55,7 +55,7 @@ public class PickPane extends GridPane {
 
     public void setPickAssignment(PickAssignment pickAssignment) {
         if (heroName != null) {
-            int position = pickAssignment.getPositionFor(Heroes.getHeroByName(heroName));
+            int position = pickAssignment.getPositionFor(Heroes.getInstance().getHeroByName(heroName));
             if (position >= 0) {
                 Player player = pickAssignment.getPlayers()[position];
                 if (player != null) {

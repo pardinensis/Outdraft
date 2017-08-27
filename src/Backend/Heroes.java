@@ -11,12 +11,32 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Heroes {
-    private static ArrayList<Hero> heroes;
-    private static HashMap<String, Integer> heroMap;
+    private ArrayList<Hero> heroes;
+    private HashMap<String, Integer> heroMap;
 
-    private static boolean checkUpdateTimestamp() {
+    private static Heroes heroesInstance = null;
+    private static volatile Heroes updatedInstance = null;
+
+    public static Heroes getInstance() {
+        if (heroesInstance == null) {
+            heroesInstance = new Heroes();
+        }
+        return heroesInstance;
+    }
+
+    public static void replaceInstanceIfUpdated() {
+        synchronized (Heroes.class) {
+            if (updatedInstance != null) {
+                heroesInstance = updatedInstance;
+                updatedInstance = null;
+            }
+        }
+    }
+
+    private boolean checkUpdateTimestamp() {
         boolean updateNecessary = false;
         long daysSinceEpoch = ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
         try {
@@ -30,7 +50,7 @@ public class Heroes {
         return updateNecessary;
     }
 
-    private static void writeUpdateTimestamp() {
+    private void writeUpdateTimestamp() {
         long daysSinceEpoch = ChronoUnit.DAYS.between(LocalDate.ofEpochDay(0), LocalDate.now());
         try {
             Writer writer = new FileWriter(new File(Resources.FILENAME_CACHE_UPDATE_TIMESTAMP));
@@ -41,44 +61,54 @@ public class Heroes {
         }
     }
 
-    public static void updateCache() {
-        if (!checkUpdateTimestamp())
+    public static void updateCache(Consumer<String> statusOutputFunction) {
+        Heroes heroes = new Heroes();
+        if (!heroes.checkUpdateTimestamp()) {
+            statusOutputFunction.accept("already up to date");
             return;
+        }
 
-        heroes = new ArrayList<>();
-        heroMap = new HashMap<>();
+        statusOutputFunction.accept("updating...");
+
+        heroes.heroes = new ArrayList<>();
+        heroes.heroMap = new HashMap<>();
 
         boolean updateFailed = false;
 
         // load hero list
-        if (initHeroListFromAPI())
-            writeHeroListToCache();
+        if (heroes.initHeroListFromAPI())
+            heroes.writeHeroListToCache();
 
         // load public win rates and popularity
-        int mmrBracket = loadMMRBracket();
-        if (loadWinRatesAndPopularityFromDotabuff(mmrBracket)) {
-            writeWinRatesAndPopularityToCache();
+        int mmrBracket = heroes.loadMMRBracket();
+        if (heroes.loadWinRatesAndPopularityFromDotabuff(mmrBracket)) {
+            heroes.writeWinRatesAndPopularityToCache();
         }
         else {
             updateFailed = true;
         }
 
         // load matchups
-        if (loadMatchupsFromDotabuff()) {
-            writeMatchupsToCache();
+        if (heroes.loadMatchupsFromDotabuff()) {
+            heroes.writeMatchupsToCache();
         }
         else {
             updateFailed = true;
         }
 
         if (!updateFailed) {
-            writeUpdateTimestamp();
+            heroes.writeUpdateTimestamp();
         }
 
-        initHeroes();
+        heroes.initHeroes();
+        synchronized (Heroes.class) {
+            updatedInstance = heroes;
+        }
+
+        statusOutputFunction.accept("update finished");
     }
 
-    public static boolean initHeroes() {
+    public boolean initHeroes() {
         heroes = new ArrayList<>();
         heroMap = new HashMap<>();
 
@@ -129,19 +159,19 @@ public class Heroes {
         return true;
     }
 
-    public static Hero getHero(int id) {
+    public Hero getHero(int id) {
         return heroes.get(id);
     }
 
-    public static Hero getHeroByName(String heroName) {
+    public Hero getHeroByName(String heroName) {
         return getHero(heroMap.get(heroName));
     }
 
-    public static int getHeroesUpperBound() {
+    public int getHeroesUpperBound() {
         return heroes.size();
     }
 
-    private static boolean initHeroListFromAPI() {
+    private boolean initHeroListFromAPI() {
         String query = Resources.API_GET_HEROES + "key=" + Resources.API_KEY + "&language=en_us";
         Map<String, Object> response = Resources.getObject(query);
 
@@ -160,7 +190,7 @@ public class Heroes {
         return  true;
     }
 
-    private static boolean initHeroListFromCache() {
+    private boolean initHeroListFromCache() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CACHE_HEROES));
             br.readLine(); // drop header
@@ -177,7 +207,7 @@ public class Heroes {
         }
     }
 
-    private static void writeHeroListToCache() {
+    private void writeHeroListToCache() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(Resources.FILENAME_CACHE_HEROES));
             bw.write("Id,Name,InternalName");
@@ -195,7 +225,7 @@ public class Heroes {
         }
     }
 
-    private static void loadPositions() {
+    private void loadPositions() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CONFIG_POSITIONS));
             br.readLine(); // drop header
@@ -211,7 +241,7 @@ public class Heroes {
         }
     }
 
-    public static void writePositions() {
+    public void writePositions() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(Resources.FILENAME_CONFIG_POSITIONS));
             bw.write("Id,Positions");
@@ -229,7 +259,7 @@ public class Heroes {
         }
     }
 
-    private static int loadMMRBracket() {
+    private int loadMMRBracket() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CONFIG_MMR_BRACKET));
             String line;
@@ -248,7 +278,7 @@ public class Heroes {
         return 1;
     }
 
-    private static boolean loadWinRatesAndPopularityFromDotabuff(int skillBracket) {
+    private boolean loadWinRatesAndPopularityFromDotabuff(int skillBracket) {
         try {
             Document doc = Jsoup.connect("https://www.dotabuff.com/heroes/meta").get();
             Elements rows = doc.select("tr");
@@ -273,7 +303,7 @@ public class Heroes {
         return false;
     }
 
-    private static void loadWinRatesAndPopularityFromCache() {
+    private void loadWinRatesAndPopularityFromCache() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CACHE_WINRATES_POPULARITY));
             br.readLine(); // drop header
@@ -291,7 +321,7 @@ public class Heroes {
         }
     }
 
-    private static void writeWinRatesAndPopularityToCache() {
+    private void writeWinRatesAndPopularityToCache() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(Resources.FILENAME_CACHE_WINRATES_POPULARITY));
             bw.write("Id,WinRate,Popularity");
@@ -311,7 +341,7 @@ public class Heroes {
         }
     }
 
-    private static boolean loadMatchupsFromDotabuff() {
+    private boolean loadMatchupsFromDotabuff() {
         HashMap<String, String> heroPages = new HashMap<>();
         Document doc = null;
         try {
@@ -348,7 +378,7 @@ public class Heroes {
         return false;
     }
 
-    private static void loadMatchupsFromCache() {
+    private void loadMatchupsFromCache() {
         try {
             for (Hero hero : heroes) {
                 if (hero == null) continue;
@@ -367,7 +397,7 @@ public class Heroes {
         }
     }
 
-    private static void loadSynergiesFromCache() {
+    private void loadSynergiesFromCache() {
         try {
             for (Hero hero : heroes) {
                 if (hero == null) continue;
@@ -386,7 +416,7 @@ public class Heroes {
         }
     }
 
-    private static void writeMatchupsToCache() {
+    private void writeMatchupsToCache() {
         try {
             for (Hero hero : heroes) {
                 if (hero == null) continue;
@@ -410,7 +440,7 @@ public class Heroes {
         }
     }
 
-    private static void addHero(int id, String name, String internalName) {
+    private void addHero(int id, String name, String internalName) {
         Hero hero = new Hero(id, name, internalName);
         while (heroes.size() <= id) {
             heroes.add(null);
@@ -419,7 +449,7 @@ public class Heroes {
         heroMap.put(name, id);
     }
 
-    public static LinkedList<Hero> getAvailableHeroes() {
+    public LinkedList<Hero> getAvailableHeroes() {
         ArrayList<Hero> bannedHeroes = new ArrayList<>();
 
         try {
@@ -442,11 +472,7 @@ public class Heroes {
         return availableHeroes;
     }
 
-    public static ArrayList<Hero> getAllHeroes() {
-        return heroes;
-    }
-
-    public static ArrayList<Hero> getStrengthHeroes() {
+    public ArrayList<Hero> getStrengthHeroes() {
         ArrayList<Hero> strengthHeroes = new ArrayList<>();
         strengthHeroes.add(getHeroByName("Abaddon"));
         strengthHeroes.add(getHeroByName("Alchemist"));
@@ -488,7 +514,7 @@ public class Heroes {
         return strengthHeroes;
     }
 
-    public static ArrayList<Hero> getAgilityHeroes() {
+    public ArrayList<Hero> getAgilityHeroes() {
         ArrayList<Hero> agilityHeroes = new ArrayList<>();
         agilityHeroes.add(getHeroByName("Anti-Mage"));
         agilityHeroes.add(getHeroByName("Arc Warden"));
@@ -529,7 +555,7 @@ public class Heroes {
         return agilityHeroes;
     }
 
-    public static ArrayList<Hero> getIntelligenceHeroes() {
+    public ArrayList<Hero> getIntelligenceHeroes() {
         ArrayList<Hero> intelligenceHeroes = new ArrayList<>();
         intelligenceHeroes.add(getHeroByName("Ancient Apparition"));
         intelligenceHeroes.add(getHeroByName("Bane"));

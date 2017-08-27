@@ -1,5 +1,6 @@
 package UI;
 
+import Backend.Heroes;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -66,6 +67,7 @@ public class PredraftPane extends GridPane {
         add(gameMode, 1, 0);
         add(captainsMode, 2, 0);
 
+        Heroes.replaceInstanceIfUpdated();
         heroGrid.reset();
         draftPane.restart(gameModeIsAllPick, firstPickIsAlly);
     }

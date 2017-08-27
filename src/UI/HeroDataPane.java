@@ -37,6 +37,6 @@ public class HeroDataPane {
             cs[i] = (char)('a' + positions[i].getFamiliarity());
         }
         hero.setPositionsString(new String(cs));
-        Heroes.writePositions();
+        Heroes.getInstance().writePositions();
     }
 }

@@ -17,7 +17,7 @@ public class OutdraftImpl implements Outdraft {
     }
 
     public boolean init() {
-        if (!Heroes.initHeroes()) {
+        if (!Heroes.getInstance().initHeroes()) {
             return false;
         }
 
@@ -39,7 +39,7 @@ public class OutdraftImpl implements Outdraft {
 
     @Override
     public synchronized void restart() {
-        availableHeroes = Heroes.getAvailableHeroes();
+        availableHeroes = Heroes.getInstance().getAvailableHeroes();
         draft.reset();
         clearCache();
 
@@ -49,7 +49,7 @@ public class OutdraftImpl implements Outdraft {
     @Override
     public synchronized void pickParty(String heroName) {
         clearCache();
-        Hero hero = Heroes.getHeroByName(heroName);
+        Hero hero = Heroes.getInstance().getHeroByName(heroName);
         draft.addOwnHero(hero);
         availableHeroes.remove(hero);
 
@@ -62,7 +62,7 @@ public class OutdraftImpl implements Outdraft {
     @Override
     public synchronized void pickEnemy(String heroName) {
         clearCache();
-        Hero hero = Heroes.getHeroByName(heroName);
+        Hero hero = Heroes.getInstance().getHeroByName(heroName);
         draft.addEnemyHero(hero);
         availableHeroes.remove(hero);
 
@@ -75,7 +75,7 @@ public class OutdraftImpl implements Outdraft {
     @Override
     public synchronized void ban(String heroName) {
         clearCache();
-        Hero hero = Heroes.getHeroByName(heroName);
+        Hero hero = Heroes.getInstance().getHeroByName(heroName);
         availableHeroes.remove(hero);
 
         undoMoves.add(() -> {
@@ -190,7 +190,7 @@ public class OutdraftImpl implements Outdraft {
         PossiblePick possiblePick = pickCache.get(heroName);
 
         if (possiblePick == null) {
-            Hero hero = Heroes.getHeroByName(heroName);
+            Hero hero = Heroes.getInstance().getHeroByName(heroName);
             Draft d = new Draft(draft);
             d.addOwnHero(hero);
             double winRate = d.calculateExpectedWinRate();
@@ -214,7 +214,7 @@ public class OutdraftImpl implements Outdraft {
         PossiblePick possibleBan = banCache.get(heroName);
 
         if (possibleBan == null) {
-            Hero hero = Heroes.getHeroByName(heroName);
+            Hero hero = Heroes.getInstance().getHeroByName(heroName);
             Draft d = new Draft(draft);
             d.addEnemyHero(hero);
             double winRate = 1 - d.calculateExpectedWinRate();
@@ -235,7 +235,7 @@ public class OutdraftImpl implements Outdraft {
     }
 
     public boolean isAvailable(String heroName) {
-        return availableHeroes.contains(Heroes.getHeroByName(heroName));
+        return availableHeroes.contains(Heroes.getInstance().getHeroByName(heroName));
     }
 
     private synchronized void clearCache() {
