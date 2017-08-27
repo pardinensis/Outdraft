@@ -68,18 +68,18 @@ public class Heroes {
             return;
         }
 
-        statusOutputFunction.accept("updating...");
-
         heroes.heroes = new ArrayList<>();
         heroes.heroMap = new HashMap<>();
 
         boolean updateFailed = false;
 
         // load hero list
+        statusOutputFunction.accept("updating hero list");
         if (heroes.initHeroListFromAPI())
             heroes.writeHeroListToCache();
 
         // load public win rates and popularity
+        statusOutputFunction.accept("updating public win rates");
         int mmrBracket = heroes.loadMMRBracket();
         if (heroes.loadWinRatesAndPopularityFromDotabuff(mmrBracket)) {
             heroes.writeWinRatesAndPopularityToCache();
@@ -89,6 +89,7 @@ public class Heroes {
         }
 
         // load matchups
+        statusOutputFunction.accept("updating matchups");
         if (heroes.loadMatchupsFromDotabuff()) {
             heroes.writeMatchupsToCache();
         }

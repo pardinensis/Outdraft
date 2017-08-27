@@ -69,7 +69,7 @@ public class Main extends Application {
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle(WINDOW_NAME);
-//        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(true);
 
         primaryStage.show();
 
