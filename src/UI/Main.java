@@ -39,8 +39,11 @@ public class Main extends Application {
         Tab draftTab = new Tab("Draft", new DraftTab(outdraft));
         draftTab.setClosable(false);
 
+        Tab dataTab = new Tab("Heroes", new DataTab());
+        dataTab.setClosable(false);
+
         TabPane tabPane = new TabPane();
-        tabPane.getTabs().addAll(teamTab, draftTab);
+        tabPane.getTabs().addAll(teamTab, draftTab, dataTab);
 
         Platform.runLater(new Runnable() {
             @Override

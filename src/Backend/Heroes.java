@@ -211,6 +211,24 @@ public class Heroes {
         }
     }
 
+    public static void writePositions() {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Resources.FILENAME_CONFIG_POSITIONS));
+            bw.write("Id,Positions");
+            bw.newLine();
+            for (int id = 0; id < heroes.size(); ++id) {
+                Hero hero = heroes.get(id);
+                if (hero != null) {
+                    bw.write(id + "," + hero.getPostionsString());
+                    bw.newLine();
+                }
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static int loadMMRBracket() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(Resources.FILENAME_CONFIG_MMR_BRACKET));
@@ -423,4 +441,137 @@ public class Heroes {
         }
         return availableHeroes;
     }
+
+    public static ArrayList<Hero> getAllHeroes() {
+        return heroes;
+    }
+
+    public static ArrayList<Hero> getStrengthHeroes() {
+        ArrayList<Hero> strengthHeroes = new ArrayList<>();
+        strengthHeroes.add(getHeroByName("Abaddon"));
+        strengthHeroes.add(getHeroByName("Alchemist"));
+        strengthHeroes.add(getHeroByName("Axe"));
+        strengthHeroes.add(getHeroByName("Beastmaster"));
+        strengthHeroes.add(getHeroByName("Brewmaster"));
+        strengthHeroes.add(getHeroByName("Bristleback"));
+        strengthHeroes.add(getHeroByName("Centaur Warrunner"));
+        strengthHeroes.add(getHeroByName("Chaos Knight"));
+        strengthHeroes.add(getHeroByName("Clockwerk"));
+        strengthHeroes.add(getHeroByName("Doom"));
+        strengthHeroes.add(getHeroByName("Dragon Knight"));
+        strengthHeroes.add(getHeroByName("Earth Spirit"));
+        strengthHeroes.add(getHeroByName("Earthshaker"));
+        strengthHeroes.add(getHeroByName("Elder Titan"));
+        strengthHeroes.add(getHeroByName("Huskar"));
+        strengthHeroes.add(getHeroByName("Io"));
+        strengthHeroes.add(getHeroByName("Kunkka"));
+        strengthHeroes.add(getHeroByName("Legion Commander"));
+        strengthHeroes.add(getHeroByName("Lifestealer"));
+        strengthHeroes.add(getHeroByName("Lycan"));
+        strengthHeroes.add(getHeroByName("Magnus"));
+        strengthHeroes.add(getHeroByName("Omniknight"));
+        strengthHeroes.add(getHeroByName("Night Stalker"));
+        strengthHeroes.add(getHeroByName("Phoenix"));
+        strengthHeroes.add(getHeroByName("Pudge"));
+        strengthHeroes.add(getHeroByName("Sand King"));
+        strengthHeroes.add(getHeroByName("Slardar"));
+        strengthHeroes.add(getHeroByName("Spirit Breaker"));
+        strengthHeroes.add(getHeroByName("Sven"));
+        strengthHeroes.add(getHeroByName("Tidehunter"));
+        strengthHeroes.add(getHeroByName("Timbersaw"));
+        strengthHeroes.add(getHeroByName("Tiny"));
+        strengthHeroes.add(getHeroByName("Treant Protector"));
+        strengthHeroes.add(getHeroByName("Tusk"));
+        strengthHeroes.add(getHeroByName("Underlord"));
+        strengthHeroes.add(getHeroByName("Undying"));
+        strengthHeroes.add(getHeroByName("Wraith King"));
+        return strengthHeroes;
+    }
+
+    public static ArrayList<Hero> getAgilityHeroes() {
+        ArrayList<Hero> agilityHeroes = new ArrayList<>();
+        agilityHeroes.add(getHeroByName("Anti-Mage"));
+        agilityHeroes.add(getHeroByName("Arc Warden"));
+        agilityHeroes.add(getHeroByName("Bloodseeker"));
+        agilityHeroes.add(getHeroByName("Bounty Hunter"));
+        agilityHeroes.add(getHeroByName("Broodmother"));
+        agilityHeroes.add(getHeroByName("Clinkz"));
+        agilityHeroes.add(getHeroByName("Drow Ranger"));
+        agilityHeroes.add(getHeroByName("Ember Spirit"));
+        agilityHeroes.add(getHeroByName("Faceless Void"));
+        agilityHeroes.add(getHeroByName("Gyrocopter"));
+        agilityHeroes.add(getHeroByName("Juggernaut"));
+        agilityHeroes.add(getHeroByName("Lone Druid"));
+        agilityHeroes.add(getHeroByName("Luna"));
+        agilityHeroes.add(getHeroByName("Medusa"));
+        agilityHeroes.add(getHeroByName("Meepo"));
+        agilityHeroes.add(getHeroByName("Mirana"));
+        agilityHeroes.add(getHeroByName("Monkey King"));
+        agilityHeroes.add(getHeroByName("Morphling"));
+        agilityHeroes.add(getHeroByName("Naga Siren"));
+        agilityHeroes.add(getHeroByName("Nyx Assassin"));
+        agilityHeroes.add(getHeroByName("Phantom Assassin"));
+        agilityHeroes.add(getHeroByName("Phantom Lancer"));
+        agilityHeroes.add(getHeroByName("Razor"));
+        agilityHeroes.add(getHeroByName("Riki"));
+        agilityHeroes.add(getHeroByName("Shadow Fiend"));
+        agilityHeroes.add(getHeroByName("Slark"));
+        agilityHeroes.add(getHeroByName("Sniper"));
+        agilityHeroes.add(getHeroByName("Spectre"));
+        agilityHeroes.add(getHeroByName("Templar Assassin"));
+        agilityHeroes.add(getHeroByName("Terrorblade"));
+        agilityHeroes.add(getHeroByName("Troll Warlord"));
+        agilityHeroes.add(getHeroByName("Ursa"));
+        agilityHeroes.add(getHeroByName("Vengeful Spirit"));
+        agilityHeroes.add(getHeroByName("Venomancer"));
+        agilityHeroes.add(getHeroByName("Viper"));
+        agilityHeroes.add(getHeroByName("Weaver"));
+        return agilityHeroes;
+    }
+
+    public static ArrayList<Hero> getIntelligenceHeroes() {
+        ArrayList<Hero> intelligenceHeroes = new ArrayList<>();
+        intelligenceHeroes.add(getHeroByName("Ancient Apparition"));
+        intelligenceHeroes.add(getHeroByName("Bane"));
+        intelligenceHeroes.add(getHeroByName("Batrider"));
+        intelligenceHeroes.add(getHeroByName("Chen"));
+        intelligenceHeroes.add(getHeroByName("Crystal Maiden"));
+        intelligenceHeroes.add(getHeroByName("Dark Seer"));
+        intelligenceHeroes.add(getHeroByName("Dazzle"));
+        intelligenceHeroes.add(getHeroByName("Death Prophet"));
+        intelligenceHeroes.add(getHeroByName("Disruptor"));
+        intelligenceHeroes.add(getHeroByName("Enchantress"));
+        intelligenceHeroes.add(getHeroByName("Enigma"));
+        intelligenceHeroes.add(getHeroByName("Invoker"));
+        intelligenceHeroes.add(getHeroByName("Jakiro"));
+        intelligenceHeroes.add(getHeroByName("Keeper of the Light"));
+        intelligenceHeroes.add(getHeroByName("Leshrac"));
+        intelligenceHeroes.add(getHeroByName("Lich"));
+        intelligenceHeroes.add(getHeroByName("Lina"));
+        intelligenceHeroes.add(getHeroByName("Lion"));
+        intelligenceHeroes.add(getHeroByName("Nature's Prophet"));
+        intelligenceHeroes.add(getHeroByName("Necrophos"));
+        intelligenceHeroes.add(getHeroByName("Ogre Magi"));
+        intelligenceHeroes.add(getHeroByName("Oracle"));
+        intelligenceHeroes.add(getHeroByName("Outworld Devourer"));
+        intelligenceHeroes.add(getHeroByName("Puck"));
+        intelligenceHeroes.add(getHeroByName("Pugna"));
+        intelligenceHeroes.add(getHeroByName("Queen of Pain"));
+        intelligenceHeroes.add(getHeroByName("Rubick"));
+        intelligenceHeroes.add(getHeroByName("Shadow Demon"));
+        intelligenceHeroes.add(getHeroByName("Shadow Shaman"));
+        intelligenceHeroes.add(getHeroByName("Silencer"));
+        intelligenceHeroes.add(getHeroByName("Skywrath Mage"));
+        intelligenceHeroes.add(getHeroByName("Storm Spirit"));
+        intelligenceHeroes.add(getHeroByName("Techies"));
+        intelligenceHeroes.add(getHeroByName("Tinker"));
+        intelligenceHeroes.add(getHeroByName("Visage"));
+        intelligenceHeroes.add(getHeroByName("Warlock"));
+        intelligenceHeroes.add(getHeroByName("Windranger"));
+        intelligenceHeroes.add(getHeroByName("Winter Wyvern"));
+        intelligenceHeroes.add(getHeroByName("Witch Doctor"));
+        intelligenceHeroes.add(getHeroByName("Zeus"));
+        return intelligenceHeroes;
+    }
+
 }

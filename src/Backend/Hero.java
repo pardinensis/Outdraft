@@ -6,6 +6,7 @@ public class Hero {
     private int id;
     private String name;
     private String internalName;
+    private String positionsStr;
     private double[] positionWRAddend;
 
     private double winRate;
@@ -54,10 +55,15 @@ public class Hero {
 
     public void setPositionsString(String positionsStr) {
         assert positionsStr.length() == 5;
+        this.positionsStr = positionsStr;
         positionWRAddend = new double[5];
         for (int i = 0; i < 5; ++i) {
             positionWRAddend[i] = Position.winRateAddend(positionsStr.charAt(i));
         }
+    }
+
+    public String getPostionsString() {
+        return positionsStr;
     }
 
     public double getPositionAddend(int pos) {

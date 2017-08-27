@@ -16,7 +16,6 @@ public class PlayerPane {
     private Player player;
 
     private CheckBox checkBox;
-    private boolean selectable;
     private TextField idField;
     private Label nameLabel;
     private PositionButton[] positions;
