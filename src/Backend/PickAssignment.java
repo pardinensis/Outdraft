@@ -7,6 +7,12 @@ public class PickAssignment {
     private Player[] players;
     private double rating;
 
+    public static double HERO_POSITION_FACTOR = 1.0f;
+    public static double PLAYER_POSITION_FACTOR = 1.0f;
+    public static double PLAYER_HERO_FACTOR = 1.0f;
+    public static double HERO_POPULARITY_FACTOR = 1.0f;
+    public static double HERO_WIN_RATE_FACTOR = 1.0f;
+
     public PickAssignment(Hero[] heroes, Player[] players) {
         assert heroes.length == 5;
         assert players.length == 5;
@@ -23,25 +29,25 @@ public class PickAssignment {
             boolean playerSet = players[position] != null;
 
             if (heroSet) {
-                double addend = heroes[position].getPositionAddend(position);
+                double addend = heroes[position].getPositionAddend(position) * HERO_POSITION_FACTOR;
                 product *= 0.5 + addend;
                 productInv *= 0.5 - addend;
             }
 
             if (playerSet) {
-                double addend = players[position].getPositionAddend(position);
+                double addend = players[position].getPositionAddend(position) * PLAYER_POSITION_FACTOR;
                 product *= 0.5 + addend;
                 productInv *= 0.5 - addend;
             }
 
             if (heroSet && playerSet) {
-                double addend = players[position].getWinRateAddend(heroes[position]);
+                double addend = players[position].getWinRateAddend(heroes[position]) * PLAYER_HERO_FACTOR;
                 product *= 0.5 + addend;
                 productInv *= 0.5 - addend;
             }
 
             if (heroSet && !playerSet) {
-                double addend = heroes[position].getPopularityWinRateAddend();
+                double addend = heroes[position].getPopularityWinRateAddend() * HERO_POPULARITY_FACTOR;
                 product *= 0.5 + addend;
                 productInv *= 0.5 - addend;
             }

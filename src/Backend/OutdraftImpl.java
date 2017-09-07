@@ -13,6 +13,9 @@ public class OutdraftImpl implements Outdraft {
 
     private LinkedList<Runnable> undoMoves;
 
+    private Player[] playerAssignments;
+    private int[] positionAssignments;
+
     public OutdraftImpl() {
     }
 
@@ -26,9 +29,37 @@ public class OutdraftImpl implements Outdraft {
 
         undoMoves = new LinkedList<>();
 
+        playerAssignments = new Player[5];
+        positionAssignments = new int[] { -1, -1, -1, -1, -1 };
+
         draft = new Draft();
 
         return true;
+    }
+
+    @Override
+    public void setPlayerAssignment(int pickId, Player player) {
+        if (player != null) {
+            for (int i = 0; i < 5; ++i) {
+                if (playerAssignments[i] != null && playerAssignments[i].getName().equals(player.getName())) {
+                    playerAssignments[i] = null;
+                }
+            }
+        }
+
+        playerAssignments[pickId] = player;
+    }
+
+    @Override
+    public void setPositionAssignment(int pickId, int position) {
+        if (position != -1) {
+            for (int i = 0; i < 5; ++i) {
+                if (positionAssignments[i] == position) {
+                    positionAssignments[i] = -1;
+                }
+            }
+        }
+        positionAssignments[pickId] = position;
     }
 
 
@@ -38,10 +69,16 @@ public class OutdraftImpl implements Outdraft {
     }
 
     @Override
+    public Team getTeam() { return team; }
+
+    @Override
     public synchronized void restart() {
         availableHeroes = Heroes.getInstance().getAvailableHeroes();
         draft.reset();
         clearCache();
+
+        playerAssignments = new Player[5];
+        positionAssignments = new int[] { -1, -1, -1, -1, -1 };
 
         undoMoves.clear();
     }
@@ -141,8 +178,46 @@ public class OutdraftImpl implements Outdraft {
         return pickAssignments;
     }
 
+    public ArrayList<PickAssignment> filterPickAssignments(ArrayList<PickAssignment> pickAssignments, ArrayList<Hero> heroes) {
+        ArrayList<PickAssignment> filteredAssignments = new ArrayList<>();
+
+        mainLoop:
+        for (PickAssignment assignment : pickAssignments) {
+            Hero[] heroPositions = assignment.getHeroes();
+            Player[] playerPositions = assignment.getPlayers();
+            for (int pos = 0; pos < 5; ++pos) {
+                Hero hero = heroPositions[pos];
+                Player player = playerPositions[pos];
+                for (int pickPos = 0; pickPos < heroes.size(); ++pickPos) {
+                    Hero pickedHero = heroes.get(pickPos);
+                    if (hero != null && pickedHero == hero) {
+                        Player assignedPlayer = playerAssignments[pickPos];
+                        if (assignedPlayer != null && assignedPlayer != player) {
+                            continue mainLoop;
+                        }
+                        int assignedPosition = positionAssignments[pickPos];
+                        if (assignedPosition != -1 && assignedPosition != pos) {
+                            continue mainLoop;
+                        }
+                    }
+                }
+            }
+
+            filteredAssignments.add(assignment);
+        }
+
+//        System.out.println(pickAssignments.size() + " -> " + filteredAssignments.size());
+
+        return filteredAssignments;
+    }
+
     public PickAssignment chooseBestPickAssignment(ArrayList<Hero> heroes, Team team) {
         ArrayList<PickAssignment> pickAssignments = generatePickAssignments(heroes, team);
+
+        if (team.getActivePlayers().size() > 0) {
+            pickAssignments = filterPickAssignments(pickAssignments, heroes);
+        }
+
         double maxRating = Double.NEGATIVE_INFINITY;
         PickAssignment bestPickAssignment = null;
         for (PickAssignment pa : pickAssignments) {
@@ -152,6 +227,7 @@ public class OutdraftImpl implements Outdraft {
                 bestPickAssignment = pa;
             }
         }
+
         return bestPickAssignment;
     }
 
@@ -238,7 +314,8 @@ public class OutdraftImpl implements Outdraft {
         return availableHeroes.contains(Heroes.getInstance().getHeroByName(heroName));
     }
 
-    private synchronized void clearCache() {
+    @Override
+    public synchronized void clearCache() {
         pickCache.clear();
         banCache.clear();
     }

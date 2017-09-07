@@ -41,8 +41,11 @@ public class Main extends Application {
         Tab dataTab = new Tab("Hero Positions", new DataTab());
         dataTab.setClosable(false);
 
+        Tab settingsTab = new Tab("Settings", new SettingsTab(outdraft));
+        settingsTab.setClosable(false);
+
         TabPane tabPane = new TabPane();
-        tabPane.getTabs().addAll(teamTab, draftTab, dataTab);
+        tabPane.getTabs().addAll(teamTab, draftTab, dataTab, settingsTab);
 
         StatusBar statusBar = new StatusBar();
 
@@ -69,7 +72,7 @@ public class Main extends Application {
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle(WINDOW_NAME);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setFullScreen(true);
 
         primaryStage.show();
 

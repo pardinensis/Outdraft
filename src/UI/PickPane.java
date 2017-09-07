@@ -3,19 +3,29 @@ package UI;
 import Backend.Heroes;
 import Backend.PickAssignment;
 import Backend.Player;
+import Backend.Outdraft;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PickPane extends GridPane {
+    private int id;
     private String heroName;
     private Label advantageLabel;
     private HeroButton heroButton;
-    private Label playerLabel;
-    private Label positionLabel;
+    private ComboBox<String> playerBox;
+    private ComboBox<String> positionBox;
+    private ChangeListener playerBoxListener;
+    private ChangeListener positionBoxListener;
 
-    public PickPane() {
+    public PickPane(Outdraft outdraft, int id, Runnable updateFunction) {
+        this.id = id;
         heroName = null;
 
         advantageLabel = new Label("");
@@ -27,13 +37,87 @@ public class PickPane extends GridPane {
 
         getStyleClass().add("pick-pane");
 
-        playerLabel = new Label("");
-        playerLabel.getStyleClass().addAll("pick-label", "label-bold");
-        add(playerLabel, 0, 2);
+        playerBox = new ComboBox<>();
+        positionBox = new ComboBox<>();
 
-        positionLabel = new Label("");
-        positionLabel.getStyleClass().addAll("pick-label");
-        add(positionLabel, 0, 3);
+        ArrayList<Player> players = outdraft.getTeam().getActivePlayers();
+        playerBoxListener = (observableValue, o, t1) -> {
+            Player player = null;
+            for (Player p : players) {
+                if (p.getName().equals(t1)) {
+                    player = p;
+                    break;
+                }
+            }
+            final Player playerArg = player;
+            Platform.runLater(() -> {
+                outdraft.setPlayerAssignment(id, playerArg);
+                if (updateFunction != null) {
+                    updateFunction.run();
+                }
+            });
+            if (player != null) {
+                playerBox.setId("user-set");
+            }
+            else {
+                playerBox.setId("");
+            }
+        };
+
+        positionBoxListener = (observableValue, o, t1) -> {
+            int position = -1;
+            String str = (String)t1;
+            if (!str.isEmpty()) {
+                char c = str.charAt(str.length() - 1);
+                position = c - '1';
+            }
+            final int positionArg = position;
+            Platform.runLater(() -> {
+                outdraft.setPositionAssignment(id, positionArg);
+                if (updateFunction != null) {
+                    updateFunction.run();
+                }
+            });
+        };
+
+        if (id >= 0) {
+            playerBox.getItems().add("");
+            for (Player player : players) {
+                playerBox.getItems().add(player.getName());
+            }
+            playerBox.valueProperty().addListener(playerBoxListener);
+
+            positionBox.getItems().addAll(
+                    "", "Position 1", "Position 2", "Position 3", "Position 4", "Position 5"
+            );
+            positionBox.valueProperty().addListener(positionBoxListener);
+        }
+
+        playerBox.setDisable(true);
+        positionBox.setDisable(true);
+        add(playerBox, 0, 2);
+        add(positionBox, 0, 3);
+    }
+
+    private void setPlayerBoxValue(String value) {
+        try {
+            playerBox.valueProperty().removeListener(playerBoxListener);
+            playerBox.setValue(value);
+            playerBox.valueProperty().addListener(playerBoxListener);
+        } catch (NullPointerException ex) {
+            // ignore
+        }
+    }
+
+    private void setPositionBoxValue(String value) {
+        try {
+            positionBox.valueProperty().removeListener(positionBoxListener);
+            positionBox.setValue(value);
+            positionBox.valueProperty().addListener(positionBoxListener);
+        } catch (NullPointerException ex) {
+            // ignore
+            System.out.println("NPEX");
+        }
     }
 
     public void setHeroName(String heroName) {
@@ -44,9 +128,11 @@ public class PickPane extends GridPane {
         else {
             heroButton.setHeroName("empty");
             advantageLabel.setText("");
-            playerLabel.setText("");
-            positionLabel.setText("");
+            setPlayerBoxValue("");
+            setPositionBoxValue("");
         }
+        playerBox.setDisable(id == -1 || heroName == null);
+        positionBox.setDisable(id == -1 || heroName == null);
     }
 
     public String getHeroName() {
@@ -59,13 +145,14 @@ public class PickPane extends GridPane {
             if (position >= 0) {
                 Player player = pickAssignment.getPlayers()[position];
                 if (player != null) {
-                    playerLabel.setText(player.getName());
+                    setPlayerBoxValue(player.getName());
                 }
                 else {
-                    playerLabel.setText("");
+                    setPlayerBoxValue("");
                 }
-                positionLabel.setText("Position " + (position + 1));
+                setPositionBoxValue("Position " + (position + 1));
             }
+            System.out.println(heroName + "  " + Arrays.toString(pickAssignment.getHeroes()));
         }
     }
 

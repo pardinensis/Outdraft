@@ -106,7 +106,7 @@ public class Heroes {
             updatedInstance = heroes;
         }
 
-        statusOutputFunction.accept("update finished");
+        statusOutputFunction.accept((updateFailed) ? "update failed" : "update finished");
     }
 
     public boolean initHeroes() {
@@ -496,8 +496,8 @@ public class Heroes {
         strengthHeroes.add(getHeroByName("Lifestealer"));
         strengthHeroes.add(getHeroByName("Lycan"));
         strengthHeroes.add(getHeroByName("Magnus"));
-        strengthHeroes.add(getHeroByName("Omniknight"));
         strengthHeroes.add(getHeroByName("Night Stalker"));
+        strengthHeroes.add(getHeroByName("Omniknight"));
         strengthHeroes.add(getHeroByName("Phoenix"));
         strengthHeroes.add(getHeroByName("Pudge"));
         strengthHeroes.add(getHeroByName("Sand King"));

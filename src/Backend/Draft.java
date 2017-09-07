@@ -99,17 +99,15 @@ public class Draft {
             }
         }
 
-        final double pubWinrateFactor = 1;
-
         // normalize hero win rates
         int n = ownHeroes.size() + enemyHeroes.size();
         for (Hero h : ownHeroes) {
-            winRateProduct *= Math.pow(h.getWinRate(), 1 + pubWinrateFactor - n);
-            winRateProductInv *= Math.pow(1 - h.getWinRate(), 1 + pubWinrateFactor - n);
+            winRateProduct *= Math.pow(h.getWinRate(), 1 + PickAssignment.HERO_WIN_RATE_FACTOR - n);
+            winRateProductInv *= Math.pow(1 - h.getWinRate(), 1 + PickAssignment.HERO_WIN_RATE_FACTOR - n);
         }
         for (Hero h : enemyHeroes) {
-            winRateProduct *= Math.pow(1 - h.getWinRate(), 1 + pubWinrateFactor - n);
-            winRateProductInv *= Math.pow(h.getWinRate(), 1 + pubWinrateFactor - n);
+            winRateProduct *= Math.pow(1 - h.getWinRate(), 1 + PickAssignment.HERO_WIN_RATE_FACTOR - n);
+            winRateProductInv *= Math.pow(h.getWinRate(), 1 + PickAssignment.HERO_WIN_RATE_FACTOR - n);
         }
 
         return winRateProduct / (winRateProduct + winRateProductInv);

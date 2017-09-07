@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Player {
+    public static final Player RANDOM_PLAYER = new Player(-1);
+
     private long id;
     private String name;
     private ArrayList<Integer> heroWins;

@@ -65,7 +65,7 @@ public class DraftPane extends HBox {
 
         final DraftOrder.State currentState = draftOrder.getCurrentState();
         PickAssignment pickAssignment;
-        switch(draftOrder.getCurrentState()) {
+        switch(currentState) {
             case PICK_ALLY:
             case BAN_ENEMY:
                 PossiblePick possiblePick = outdraft.getPossiblePick(heroName);
@@ -78,7 +78,7 @@ public class DraftPane extends HBox {
             case PICK_ENEMY:
             case BAN_ALLY:
                 PossiblePick possibleBan = outdraft.getPossibleBan(heroName);
-                pickAssignment = possibleBan.getEnemyPickAssignment();
+                pickAssignment = possibleBan.getOwnPickAssignment();
                 for (int i = 0; i < 5; ++i) {
                     enemyPickPanes[i].setPickAssignment(pickAssignment);
                 }
@@ -86,7 +86,7 @@ public class DraftPane extends HBox {
                 break;
         }
 
-        switch (draftOrder.getCurrentState()) {
+        switch (currentState) {
             case PICK_ALLY:
             case BAN_ENEMY:
                 setAdvantages(heroName, true);
@@ -181,6 +181,15 @@ public class DraftPane extends HBox {
                 break;
         }
 
+
+        for (int i = 0; i < 5; ++i) {
+            allyPickPanes[i].setPickAssignment(outdraft.getCurrentState().getOwnPickAssignment());
+        }
+        for (int i = 0; i < 5; ++i) {
+            enemyPickPanes[i].setPickAssignment(outdraft.getCurrentState().getEnemyPickAssignment());
+        }
+
+
         if (highlightedImage != null) {
             highlightedImage.getStyleClass().add("hovered");
         }
@@ -274,7 +283,12 @@ public class DraftPane extends HBox {
         direBanGrid.getStyleClass().add("draft-pane-bans");
 
         for (int i = 0; i < 5; ++i) {
-            PickPane pickPane = new PickPane();
+            PickPane pickPane = new PickPane(outdraft, i, () -> {
+                outdraft.clearCache();
+                updateHighlighting();
+                winRateLabel.setWinRate(outdraft.getCurrentState().getWinRate());
+                runUpdateActions();
+            });
             radiantPickGrid.add(pickPane, 4 - i, 0);
             pickPane.getHeroButton().setHoverAction(() -> {
                 setImages(null);
@@ -283,7 +297,7 @@ public class DraftPane extends HBox {
             allyPickPanes[i] = pickPane;
         }
         for (int i = 0; i < 5; ++i) {
-            PickPane pickPane = new PickPane();
+            PickPane pickPane = new PickPane(outdraft, -1, null);
             direPickGrid.add(pickPane, i, 0);
             pickPane.getHeroButton().setHoverAction(() -> {
                 setImages(null);
