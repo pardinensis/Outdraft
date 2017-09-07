@@ -11,7 +11,9 @@ import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -68,12 +70,40 @@ public class Main extends Application {
             primaryStage.setWidth(primaryStage.getWidth() + 1);
         });
 
-        Scene scene = new Scene(mainPane, 1600, 900);
+        final int width = 1200;
+        final int height = 900;
+
+        Scene scene = new Scene(mainPane, width, height);
         scene.getStylesheets().add(Main.class.getResource("UI.css").toExternalForm());
+
+        Rectangle2D bestScreenBounds = null;
+        double bestScreenScore = Double.NEGATIVE_INFINITY;
+        for (Screen screen : Screen.getScreens()) {
+            double score = 0;
+
+            Rectangle2D bounds = screen.getVisualBounds();
+            if (bounds.getWidth() < width || bounds.getHeight() < height) {
+                score = -1000;
+            }
+            else {
+                score -= (bounds.getWidth() - width) + (bounds.getHeight() - height);
+            }
+
+            if (screen == Screen.getPrimary()) {
+                score -= 100;
+            }
+
+            if (score > bestScreenScore) {
+                bestScreenScore = score;
+                bestScreenBounds = bounds;
+            }
+        }
+
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setScene(scene);
         primaryStage.setTitle(WINDOW_NAME);
-//        primaryStage.setFullScreen(true);
-
+        primaryStage.setX(bestScreenBounds.getMinX() + bestScreenBounds.getWidth() / 2 - width / 2);
+        primaryStage.setY(bestScreenBounds.getMinY() + bestScreenBounds.getHeight() / 2 - height / 2);
         primaryStage.show();
 
         final Task<Void> task = new Task<Void>() {

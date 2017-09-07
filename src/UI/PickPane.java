@@ -56,12 +56,7 @@ public class PickPane extends GridPane {
                     updateFunction.run();
                 }
             });
-            if (player != null) {
-                playerBox.setId("user-set");
-            }
-            else {
-                playerBox.setId("");
-            }
+            playerBox.setId((player != null) ? "user-set" : "");
         };
 
         positionBoxListener = (observableValue, o, t1) -> {
@@ -78,6 +73,7 @@ public class PickPane extends GridPane {
                     updateFunction.run();
                 }
             });
+            positionBox.setId((position != -1) ? "user-set" : "");
         };
 
         if (id >= 0) {
@@ -100,24 +96,15 @@ public class PickPane extends GridPane {
     }
 
     private void setPlayerBoxValue(String value) {
-        try {
-            playerBox.valueProperty().removeListener(playerBoxListener);
-            playerBox.setValue(value);
-            playerBox.valueProperty().addListener(playerBoxListener);
-        } catch (NullPointerException ex) {
-            // ignore
-        }
+        playerBox.valueProperty().removeListener(playerBoxListener);
+        playerBox.setValue(value);
+        playerBox.valueProperty().addListener(playerBoxListener);
     }
 
     private void setPositionBoxValue(String value) {
-        try {
-            positionBox.valueProperty().removeListener(positionBoxListener);
-            positionBox.setValue(value);
-            positionBox.valueProperty().addListener(positionBoxListener);
-        } catch (NullPointerException ex) {
-            // ignore
-            System.out.println("NPEX");
-        }
+        positionBox.valueProperty().removeListener(positionBoxListener);
+        positionBox.setValue(value);
+        positionBox.valueProperty().addListener(positionBoxListener);
     }
 
     public void setHeroName(String heroName) {
@@ -130,6 +117,7 @@ public class PickPane extends GridPane {
             advantageLabel.setText("");
             setPlayerBoxValue("");
             setPositionBoxValue("");
+            playerBox.setId("");
         }
         playerBox.setDisable(id == -1 || heroName == null);
         positionBox.setDisable(id == -1 || heroName == null);

@@ -34,7 +34,7 @@
 }
 
 .tab-content {
-    -fx-padding: 20;
+    -fx-padding: 10;
     -fx-vgap: 20;
     -fx-hgap: 20;
 }
@@ -81,15 +81,15 @@
 }
 
 .pick-pane {
-    -fx-padding: 4;
+    -fx-padding: 2;
     -fx-vgap: 4;
     -fx-alignment: center;
 }
 
 .draft-pane {
     -fx-padding: 10;
-    -fx-vgap: 6;
-    -fx-hgap: 6;
+    -fx-vgap: 4;
+    -fx-hgap: 2;
 }
 
 .draft-pane-bans {
@@ -126,8 +126,8 @@
 }
 
 .pick-label {
-    -fx-min-width: 116;
-    -fx-max-width: 116;
+    -fx-min-width: 84;
+    -fx-max-width: 84;
 }
 
 .label-bold {
@@ -150,8 +150,8 @@
 
 .combo-box {
     -fx-background-color: #222222;
-    -fx-min-width: 116;
-    -fx-max-width: 116;
+    -fx-min-width: 84;
+    -fx-max-width: 84;
 }
 
 .combo-box .list-cell {
