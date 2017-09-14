@@ -14,7 +14,7 @@ public class DraftTab extends GridPane {
 
         WinRateLabel winRateLabel = new WinRateLabel();
         DraftPane draftPane = new DraftPane(outdraft, winRateLabel);
-        HeroGrid heroGrid = new HeroGrid(draftPane);
+        HeroGrid heroGrid = new HeroGrid(draftPane, true);
         PredraftPane predraftPane = new PredraftPane(draftPane, heroGrid);
         RecommendationPane pickRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, true);
         RecommendationPane banRecommendationPane = new RecommendationPane(outdraft, draftPane, heroGrid, false);

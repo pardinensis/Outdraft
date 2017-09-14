@@ -12,9 +12,10 @@ import javafx.scene.layout.GridPane;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PickPane extends GridPane {
+    private static final String RANDOM_PLAYER_STRING = "RANDOM";
+
     private int id;
     private String heroName;
     private Label advantageLabel;
@@ -32,7 +33,7 @@ public class PickPane extends GridPane {
         advantageLabel.getStyleClass().addAll("pick-label");
         add(advantageLabel, 0, 0);
 
-        heroButton = new HeroButton("empty", HeroButton.ImageType.LARGE);
+        heroButton = new HeroButton("empty", HeroButton.ImageType.LARGE, false);
         add(heroButton, 0, 1);
 
         getStyleClass().add("pick-pane");
@@ -43,10 +44,15 @@ public class PickPane extends GridPane {
         ArrayList<Player> players = outdraft.getTeam().getActivePlayers();
         playerBoxListener = (observableValue, o, t1) -> {
             Player player = null;
-            for (Player p : players) {
-                if (p.getName().equals(t1)) {
-                    player = p;
-                    break;
+            if (t1.equals(RANDOM_PLAYER_STRING)) {
+                player = Player.RANDOM_PLAYER;
+            }
+            else {
+                for (Player p : players) {
+                    if (p.getName().equals(t1)) {
+                        player = p;
+                        break;
+                    }
                 }
             }
             final Player playerArg = player;
@@ -80,6 +86,9 @@ public class PickPane extends GridPane {
             playerBox.getItems().add("");
             for (Player player : players) {
                 playerBox.getItems().add(player.getName());
+            }
+            if (players.size() < 5) {
+                playerBox.getItems().add(RANDOM_PLAYER_STRING);
             }
             playerBox.valueProperty().addListener(playerBoxListener);
 
@@ -118,6 +127,7 @@ public class PickPane extends GridPane {
             setPlayerBoxValue("");
             setPositionBoxValue("");
             playerBox.setId("");
+            positionBox.setId("");
         }
         playerBox.setDisable(id == -1 || heroName == null);
         positionBox.setDisable(id == -1 || heroName == null);
@@ -133,14 +143,13 @@ public class PickPane extends GridPane {
             if (position >= 0) {
                 Player player = pickAssignment.getPlayers()[position];
                 if (player != null) {
-                    setPlayerBoxValue(player.getName());
+                    setPlayerBoxValue(player.getName() + " ");
                 }
                 else {
-                    setPlayerBoxValue("");
+                    setPlayerBoxValue(RANDOM_PLAYER_STRING + " ");
                 }
-                setPositionBoxValue("Position " + (position + 1));
+                setPositionBoxValue("Position " + (position + 1) + " ");
             }
-            System.out.println(heroName + "  " + Arrays.toString(pickAssignment.getHeroes()));
         }
     }
 

@@ -142,7 +142,7 @@ public class Hero {
         double myWR = winRate;
         double oppWR = Heroes.getInstance().getHero(opponentId).getWinRate();
         double expectedWR = (myWR * (1 - oppWR)) / (myWR * (1 - oppWR) + oppWR * (1 - myWR));
-//        System.out.println("Matchup " + name + " " + Heroes.getHero(opponentId).getName() + ": " + matchups.get(opponentId));
+//        System.out.println("Matchup " + name + " " + Heroes.getInstance().getHero(opponentId).getName() + ": " + matchups.get(opponentId));
         return expectedWR + matchups.get(opponentId);
     }
 
@@ -166,6 +166,10 @@ public class Hero {
 
     public void analyzeMatchups() {
         for (int opponentId = 0; opponentId < matchupsWon.size(); ++opponentId) {
+            while (opponentId >= matchups.size()) {
+                matchups.add(0.0);
+            }
+
             if (opponentId == id) continue;
             Hero opponent = Heroes.getInstance().getHero(opponentId);
             if (opponent == null) continue;
@@ -175,9 +179,6 @@ public class Hero {
             double expectedWR = (myWR * (1 - oppWR)) / (myWR * (1 - oppWR) + oppWR * (1 - myWR));
             double measuredWR = matchupsWon.get(opponentId) / (double) matchupsPlayed.get(opponentId);
 
-            while (opponentId >= matchups.size()) {
-                matchups.add(0.0);
-            }
             matchups.set(opponentId, measuredWR - expectedWR);
         }
     }

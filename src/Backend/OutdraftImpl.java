@@ -192,8 +192,15 @@ public class OutdraftImpl implements Outdraft {
                     Hero pickedHero = heroes.get(pickPos);
                     if (hero != null && pickedHero == hero) {
                         Player assignedPlayer = playerAssignments[pickPos];
-                        if (assignedPlayer != null && assignedPlayer != player) {
-                            continue mainLoop;
+                        if (assignedPlayer != null) {
+                            if (assignedPlayer == Player.RANDOM_PLAYER) {
+                                if (player != null) {
+                                    continue mainLoop;
+                                }
+                            }
+                            else if(assignedPlayer != player) {
+                                continue mainLoop;
+                            }
                         }
                         int assignedPosition = positionAssignments[pickPos];
                         if (assignedPosition != -1 && assignedPosition != pos) {

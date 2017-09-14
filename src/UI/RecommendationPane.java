@@ -35,7 +35,7 @@ public class RecommendationPane extends VBox {
 
         heroButtons = new ArrayList<>();
         for (int i = 0; i < N_BUTTONS; ++i) {
-            HeroButton heroButton = new HeroButton("Axe", HeroButton.ImageType.HORIZONTAL);
+            HeroButton heroButton = new HeroButton("Axe", HeroButton.ImageType.HORIZONTAL, true);
             heroButton.setClickAction(() -> {
                 heroGrid.setUnavailable(heroButton.getHeroName());
                 draftPane.click(heroButton.getHeroName());

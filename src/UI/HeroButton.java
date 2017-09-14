@@ -11,6 +11,8 @@ public class HeroButton extends HeroImage {
         LARGE
     }
 
+    private boolean makeUnavailableOnClick;
+
     private Runnable hoverAction, hoverEndAction;
     private Rectangle overlay;
     private boolean available;
@@ -30,12 +32,13 @@ public class HeroButton extends HeroImage {
         return null;
     }
 
-    public HeroButton(String heroName, ImageType imageType) {
+    public HeroButton(String heroName, ImageType imageType, boolean makeUnavailableOnClick) {
         super(getImage(heroName, imageType));
 
         this.heroName = heroName;
         this.imageType = imageType;
         this.highlighted = false;
+        this.makeUnavailableOnClick = makeUnavailableOnClick;
 
         overlay = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
         overlay.getStyleClass().add("available");
@@ -68,7 +71,9 @@ public class HeroButton extends HeroImage {
         setOnMouseClicked((MouseEvent e) -> {
             if (available) {
                 highlighted = false;
-                setAvailable(false);
+                if (makeUnavailableOnClick) {
+                    setAvailable(false);
+                }
                 action.run();
                 if (hoverAction != null) {
                     hoverAction.run();

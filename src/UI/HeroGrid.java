@@ -8,11 +8,13 @@ import java.util.ArrayList;
 
 public class HeroGrid extends GridPane {
 
-    private DraftPane draftPane;
+    private HeroGridActionReceiver receiver;
     private ArrayList<HeroButton> buttons;
+    private boolean makeUnavailableOnClick;
 
-    public HeroGrid(DraftPane draftPane) {
-        this.draftPane = draftPane;
+    public HeroGrid(HeroGridActionReceiver receiver, boolean makeUnavailableOnClick) {
+        this.receiver = receiver;
+        this.makeUnavailableOnClick = makeUnavailableOnClick;
         buttons = new ArrayList<>();
 
         getStyleClass().add("hero-grid");
@@ -44,10 +46,10 @@ public class HeroGrid extends GridPane {
     private void addHero(GridPane pane, String heroName) {
         final int width = 21;
         int index = pane.getChildren().size();
-        HeroButton heroButton = new HeroButton(heroName, HeroButton.ImageType.HORIZONTAL);
-        heroButton.setClickAction(() -> draftPane.click(heroButton.getHeroName()));
-        heroButton.setHoverAction(() -> draftPane.hover(heroName));
-        heroButton.setHoverEndAction(draftPane::hoverEnd);
+        HeroButton heroButton = new HeroButton(heroName, HeroButton.ImageType.HORIZONTAL, makeUnavailableOnClick);
+        heroButton.setClickAction(() -> receiver.click(heroButton.getHeroName()));
+        heroButton.setHoverAction(() -> receiver.hover(heroName));
+        heroButton.setHoverEndAction(receiver::hoverEnd);
         buttons.add(heroButton);
         pane.add(heroButton, index % width, index / width);
     }

@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
 
-public class DraftPane extends HBox {
+public class DraftPane extends HBox implements HeroGridActionReceiver {
 
     interface UpdateAction {
         void update(DraftOrder.State state);

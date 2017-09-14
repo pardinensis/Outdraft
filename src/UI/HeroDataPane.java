@@ -15,7 +15,7 @@ public class HeroDataPane {
     public HeroDataPane(Hero hero, GridPane grid, int row) {
         this.hero = hero;
 
-        image = new HeroButton(hero.getName(), HeroButton.ImageType.HORIZONTAL);
+        image = new HeroButton(hero.getName(), HeroButton.ImageType.HORIZONTAL, false);
         grid.add(image, 0, row);
 
 //        nameLabel = new Label(hero.getName());

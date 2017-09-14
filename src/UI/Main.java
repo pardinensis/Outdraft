@@ -40,7 +40,7 @@ public class Main extends Application {
         Tab draftTab = new Tab("Draft", new DraftTab(outdraft));
         draftTab.setClosable(false);
 
-        Tab dataTab = new Tab("Hero Positions", new DataTab());
+        Tab dataTab = new Tab("Heroes", new DataTab());
         dataTab.setClosable(false);
 
         Tab settingsTab = new Tab("Settings", new SettingsTab(outdraft));
@@ -83,7 +83,7 @@ public class Main extends Application {
 
             Rectangle2D bounds = screen.getVisualBounds();
             if (bounds.getWidth() < width || bounds.getHeight() < height) {
-                score = -1000;
+                score = -1000000;
             }
             else {
                 score -= (bounds.getWidth() - width) + (bounds.getHeight() - height);

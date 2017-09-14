@@ -142,6 +142,7 @@ public class Heroes {
                 hero.analyzeSynergies();
             }
         }
+
 //
 //        try {
 //            String filename = "synergies.txt";
@@ -471,6 +472,10 @@ public class Heroes {
             }
         }
         return availableHeroes;
+    }
+
+    public ArrayList<Hero> getAllHeroes() {
+        return heroes;
     }
 
     public ArrayList<Hero> getStrengthHeroes() {

@@ -126,8 +126,13 @@
 }
 
 .pick-label {
-    -fx-min-width: 84;
-    -fx-max-width: 84;
+    -fx-min-width: 94;
+    -fx-max-width: 94;
+}
+
+.info-label {
+    -fx-min-width: 200;
+    -fx-max-width: 200;
 }
 
 .label-bold {
@@ -150,8 +155,8 @@
 
 .combo-box {
     -fx-background-color: #222222;
-    -fx-min-width: 84;
-    -fx-max-width: 84;
+    -fx-min-width: 94;
+    -fx-max-width: 94;
 }
 
 .combo-box .list-cell {
