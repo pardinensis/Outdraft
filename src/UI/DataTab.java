@@ -19,10 +19,12 @@ public class DataTab extends GridPane implements HeroGridActionReceiver {
     private Label winRateLabel;
 
     private static final int N_MATCHUPS = 16;
-    private static final int N_MATCHUP_ROWS = 1;
     private HeroButton[] goodAllyImages;
+    private Label[] goodAllyLabels;
     private HeroButton[] goodEnemyImages;
+    private Label[] goodEnemyLabels;
     private HeroButton[] badEnemyImages;
+    private Label[] badEnemyLabels;
 
     private HeroGrid heroGrid;
 
@@ -54,24 +56,36 @@ public class DataTab extends GridPane implements HeroGridActionReceiver {
         add(matchupPane, 2, 0);
 
         Label allyLabel = new Label("best with");
-        matchupPane.add(allyLabel, 0, 0, N_MATCHUPS / N_MATCHUP_ROWS, 1);
+        matchupPane.add(allyLabel, 0, 0, N_MATCHUPS, 1);
         Label enemyLabel = new Label("best against");
-        matchupPane.add(enemyLabel, 0, 1 + N_MATCHUP_ROWS, N_MATCHUPS / N_MATCHUP_ROWS, 1);
+        matchupPane.add(enemyLabel, 0, 3, N_MATCHUPS, 1);
         Label enemyLabel2 = new Label("worst against");
-        matchupPane.add(enemyLabel2, 0, 2 + 2 * N_MATCHUP_ROWS, N_MATCHUPS / N_MATCHUP_ROWS, 1);
+        matchupPane.add(enemyLabel2, 0, 6, N_MATCHUPS, 1);
 
         goodAllyImages = new HeroButton[N_MATCHUPS];
+        goodAllyLabels = new Label[N_MATCHUPS];
         goodEnemyImages = new HeroButton[N_MATCHUPS];
+        goodEnemyLabels = new Label[N_MATCHUPS];
         badEnemyImages = new HeroButton[N_MATCHUPS];
+        badEnemyLabels = new Label[N_MATCHUPS];
         for (int i = 0; i < N_MATCHUPS; ++i) {
             goodAllyImages[i] = new HeroButton("empty", HeroButton.ImageType.HORIZONTAL, false);
-            matchupPane.add(goodAllyImages[i], i % (N_MATCHUPS / N_MATCHUP_ROWS), 1 + i / (N_MATCHUPS / N_MATCHUP_ROWS));
+            matchupPane.add(goodAllyImages[i], i, 1);
+
+            goodAllyLabels[i] = new Label("0.00");
+            matchupPane.add(goodAllyLabels[i], i, 2);
 
             goodEnemyImages[i] = new HeroButton("empty", HeroButton.ImageType.HORIZONTAL, false);
-            matchupPane.add(goodEnemyImages[i], i % (N_MATCHUPS / N_MATCHUP_ROWS), 2 + N_MATCHUP_ROWS + i / (N_MATCHUPS / N_MATCHUP_ROWS));
+            matchupPane.add(goodEnemyImages[i], i, 4);
+
+            goodEnemyLabels[i] = new Label("0.00");
+            matchupPane.add(goodEnemyLabels[i], i, 5);
 
             badEnemyImages[i] = new HeroButton("empty", HeroButton.ImageType.HORIZONTAL, false);
-            matchupPane.add(badEnemyImages[i], i % (N_MATCHUPS / N_MATCHUP_ROWS), 3 + 2 * N_MATCHUP_ROWS + i / (N_MATCHUPS / N_MATCHUP_ROWS));
+            matchupPane.add(badEnemyImages[i], i, 7);
+
+            badEnemyLabels[i] = new Label("0.00");
+            matchupPane.add(badEnemyLabels[i], i, 8);
         }
 
         Separator separator = new Separator(Orientation.HORIZONTAL);
@@ -83,12 +97,7 @@ public class DataTab extends GridPane implements HeroGridActionReceiver {
 
     }
 
-    @Override
-    public void click(String heroName) {
-    }
-
-    @Override
-    public void hover(String heroName) {
+    private void setHero(String heroName) {
         heroNameLabel.setText(heroName);
         heroImage.setHeroName(heroName);
 
@@ -105,16 +114,36 @@ public class DataTab extends GridPane implements HeroGridActionReceiver {
             }
         }
 
+        df = new DecimalFormat("0.00");
         heroes.sort((Hero lhs, Hero rhs) -> Double.compare(hero.getSynergy(rhs), hero.getSynergy(lhs)));
         for (int i = 0; i < N_MATCHUPS; ++i) {
             goodAllyImages[i].setHeroName(heroes.get(i).getName());
+            double advantage = hero.getSynergy(heroes.get(i));
+            goodAllyLabels[i].setText(df.format(advantage * 100) + "%");
+            goodAllyLabels[i].setTextFill(Tools.ratingToColor(advantage, -0.04, 0.04));
         }
 
         heroes.sort((Hero lhs, Hero rhs) -> Double.compare(hero.getMatchup(rhs), hero.getMatchup(lhs)));
         for (int i = 0; i < N_MATCHUPS; ++i) {
             goodEnemyImages[i].setHeroName(heroes.get(i).getName());
+            double advantage = hero.getMatchup(heroes.get(i));
+            goodEnemyLabels[i].setText(df.format(advantage * 100) + "%");
+            goodEnemyLabels[i].setTextFill(Tools.ratingToColor(advantage, -0.04, 0.04));
+
             badEnemyImages[i].setHeroName(heroes.get(heroes.size() - 1 - i).getName());
+            advantage = hero.getMatchup(heroes.get(heroes.size() - 1 - i));
+            badEnemyLabels[i].setText(df.format(advantage * 100) + "%");
+            badEnemyLabels[i].setTextFill(Tools.ratingToColor(advantage, -0.04, 0.04));
         }
+    }
+
+    @Override
+    public void click(String heroName) {
+    }
+
+    @Override
+    public void hover(String heroName) {
+        setHero(heroName);
     }
 
     @Override
