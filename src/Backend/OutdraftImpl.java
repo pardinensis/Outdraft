@@ -51,6 +51,11 @@ public class OutdraftImpl implements Outdraft {
     }
 
     @Override
+    public Player[] getPlayerAssignments() {
+        return playerAssignments;
+    }
+
+    @Override
     public void setPositionAssignment(int pickId, int position) {
         if (position != -1) {
             for (int i = 0; i < 5; ++i) {
@@ -62,6 +67,10 @@ public class OutdraftImpl implements Outdraft {
         positionAssignments[pickId] = position;
     }
 
+    @Override
+    public int[] getPositionAssignments() {
+        return positionAssignments;
+    }
 
     @Override
     public void setTeam(Team team) {

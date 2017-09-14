@@ -240,11 +240,12 @@ public class DraftPane extends HBox implements HeroGridActionReceiver {
 
         Image banImage = ImageLoader.getHorizontalImage("empty");
         for (int i = 0; i < 5; ++i) {
+            allyPickPanes[i].resetPlayers();
+
             allyPickPanes[i].setHeroName(null);
             enemyPickPanes[i].setHeroName(null);
             allyBanImages[i].setImage(banImage);
             enemyBanImages[i].setImage(banImage);
-
         }
 
         String gameMode = (allPick) ? "All Pick" : "Captains Mode";
@@ -287,6 +288,18 @@ public class DraftPane extends HBox implements HeroGridActionReceiver {
                 outdraft.clearCache();
                 updateHighlighting();
                 winRateLabel.setWinRate(outdraft.getCurrentState().getWinRate());
+
+                Player[] playerAssignments = outdraft.getPlayerAssignments();
+                int[] positionAssignments = outdraft.getPositionAssignments();
+                for (int j = 0; j < 5; ++j) {
+                    if (playerAssignments[j] == null) {
+                        allyPickPanes[j].resetPlayerHighlighting();
+                    }
+                    if (positionAssignments[j] == -1) {
+                        allyPickPanes[j].resetPositionHighlighting();
+                    }
+                }
+
                 runUpdateActions();
             });
             radiantPickGrid.add(pickPane, 4 - i, 0);

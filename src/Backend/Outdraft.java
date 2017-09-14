@@ -14,7 +14,9 @@ public interface Outdraft {
     void ban(String heroName);
 
     void setPlayerAssignment(int pickId, Player player);
+    Player[] getPlayerAssignments();
     void setPositionAssignment(int pickId, int position);
+    int[] getPositionAssignments();
 
     void undo();
 
