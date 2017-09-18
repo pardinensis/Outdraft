@@ -1,7 +1,7 @@
 # Choose the MMR backet you are playing in
-# 1: less than 2000
-# 2: 2000 - 3000
-# 3: 3000 - 4000
-# 4: 4000 - 5000
-# 5: more than 5000
-4
+# 0: less than 2000
+# 1: 2000 - 3000
+# 2: 3000 - 4000
+# 3: 4000 - 5000
+# 4: more than 5000
+3

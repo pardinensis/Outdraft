@@ -9,8 +9,9 @@ public class Hero {
     private String positionsStr;
     private double[] positionWRAddend;
 
-    private double winRate;
-    private double popularity;
+    private double[] winRateBrackets;
+    private double[] popularityBrackets;
+    private static int bracket;
 
     private ArrayList<Long> matchupsWon;
     private ArrayList<Long> matchupsPlayed;
@@ -29,6 +30,10 @@ public class Hero {
         this.id = id;
         this.name = name;
         this.internalName = internalName;
+
+        winRateBrackets = new double[5];
+        popularityBrackets = new double[5];
+        bracket = 0;
 
         matchupsWon = new ArrayList<>();
         matchupsPlayed = new ArrayList<>();
@@ -71,23 +76,36 @@ public class Hero {
     }
 
     public double getWinRate() {
-        return winRate;
-    }
-
-    public void setWinRate(double winRate) {
-        this.winRate = winRate;
+        return winRateBrackets[bracket];
     }
 
     public double getPopularity() {
-        return popularity;
+        return popularityBrackets[bracket];
     }
+
+    public void setWinRateBracket(int bracket, double winRate) {
+        winRateBrackets[bracket] = winRate;
+    }
+
+    public void setPopularityBracket(int bracket, double popularity) {
+        popularityBrackets[bracket] = popularity;
+    }
+
+    public double getWinRateBracket(int bracket) {
+        return winRateBrackets[bracket];
+    }
+
+    public double getPopularityBracket(int bracket) {
+        return popularityBrackets[bracket];
+    }
+
+    public void setBracket(int bracket) {
+        this.bracket = bracket;
+    }
+
 
     public double getPopularityWinRateAddend() {
-        return -0.05 * Math.exp(-17 * popularity);
-    }
-
-    public void setPopularity(double popularity) {
-        this.popularity = popularity;
+        return -0.05 * Math.exp(-17 * popularityBrackets[bracket]);
     }
 
     public void setMatchup(int opponentId, long won, long played) {
@@ -131,7 +149,7 @@ public class Hero {
     }
 
     public double getWinRateWith(int teammateId) {
-        double myWR = winRate;
+        double myWR = winRateBrackets[bracket];
         double tmWR = Heroes.getInstance().getHero(teammateId).getWinRate();
         double expectedWR = (myWR * tmWR) / (myWR * tmWR + (1 - myWR) * (1 - tmWR));
 //        System.out.println("Synergy " + name + " " + Heroes.getHero(teammateId).getName() + ": " + synergies.get(teammateId));
@@ -139,7 +157,7 @@ public class Hero {
     }
 
     public double getWinRateAgainst(int opponentId) {
-        double myWR = winRate;
+        double myWR = winRateBrackets[bracket];
         double oppWR = Heroes.getInstance().getHero(opponentId).getWinRate();
         double expectedWR = (myWR * (1 - oppWR)) / (myWR * (1 - oppWR) + oppWR * (1 - myWR));
 //        System.out.println("Matchup " + name + " " + Heroes.getInstance().getHero(opponentId).getName() + ": " + matchups.get(opponentId));

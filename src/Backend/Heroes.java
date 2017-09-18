@@ -14,11 +14,16 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class Heroes {
+    private static final int N_SKILL_BRACKETS = 5;
+
     private ArrayList<Hero> heroes;
     private HashMap<String, Integer> heroMap;
 
     private static Heroes heroesInstance = null;
     private static volatile Heroes updatedInstance = null;
+
+    private int mmrBracket;
+
 
     public static Heroes getInstance() {
         if (heroesInstance == null) {
@@ -80,8 +85,7 @@ public class Heroes {
 
         // load public win rates and popularity
         statusOutputFunction.accept("updating public win rates");
-        int mmrBracket = heroes.loadMMRBracket();
-        if (heroes.loadWinRatesAndPopularityFromDotabuff(mmrBracket)) {
+        if (heroes.loadWinRatesAndPopularityFromDotabuff()) {
             heroes.writeWinRatesAndPopularityToCache();
         }
         else {
@@ -142,6 +146,8 @@ public class Heroes {
                 hero.analyzeSynergies();
             }
         }
+
+        setMMRBracket(loadMMRBracket());
 
 //
 //        try {
@@ -268,7 +274,7 @@ public class Heroes {
             while ((line = br.readLine()) != null) {
                 if (line.equals("") || line.startsWith("#")) continue;
                 int skillBracket = Integer.valueOf(line);
-                if (skillBracket < 1 || skillBracket > 5) {
+                if (skillBracket < 0 || skillBracket >= N_SKILL_BRACKETS) {
                     System.err.println("Invalid MMR bracket number: " + skillBracket);
                 } else {
                     return skillBracket;
@@ -280,20 +286,22 @@ public class Heroes {
         return 1;
     }
 
-    private boolean loadWinRatesAndPopularityFromDotabuff(int skillBracket) {
+    private boolean loadWinRatesAndPopularityFromDotabuff() {
         try {
             Document doc = Jsoup.connect("https://www.dotabuff.com/heroes/meta").get();
             Elements rows = doc.select("tr");
             for (Element row : rows) {
                 Elements children = row.children();
                 if (children.size() == 12) {
-                    int column = 1 + 2 * skillBracket;
                     String heroName = row.child(0).attr("data-value");
-                    double winRate = new Double(row.child(column).attr("data-value"));
-                    double popularity = new Double(row.child(column - 1).attr("data-value"));
                     Hero hero = heroes.get(heroMap.get(heroName));
-                    hero.setWinRate(winRate * 0.01);
-                    hero.setPopularity(popularity * 0.01);
+                    for (int skillBracket = 0; skillBracket < N_SKILL_BRACKETS; ++skillBracket) {
+                        int column = 3 + 2 * skillBracket;
+                        double winRate = new Double(row.child(column).attr("data-value"));
+                        double popularity = new Double(row.child(column - 1).attr("data-value"));
+                        hero.setWinRateBracket(skillBracket, winRate * 0.01);
+                        hero.setPopularityBracket(skillBracket, popularity * 0.01);
+                    }
                 }
             }
             return true;
@@ -313,10 +321,12 @@ public class Heroes {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] token = line.split(",");
-                assert token.length == 3;
+                assert token.length == 1 + 2 * N_SKILL_BRACKETS;
                 Hero hero = heroes.get(Integer.valueOf(token[0]));
-                hero.setWinRate(Double.valueOf(token[1]));
-                hero.setPopularity(Double.valueOf(token[2]));
+                for (int skillBracket = 0; skillBracket < N_SKILL_BRACKETS; ++skillBracket) {
+                    hero.setWinRateBracket(skillBracket, Double.valueOf(token[1 + 2 * skillBracket]));
+                    hero.setPopularityBracket(skillBracket, Double.valueOf(token[2 + 2 * skillBracket]));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -332,14 +342,26 @@ public class Heroes {
             for (int id = 0; id < heroes.size(); ++id) {
                 Hero hero = heroes.get(id);
                 if (hero != null) {
-                    bw.write(id + "," + decimalFormat.format(hero.getWinRate()) + "," +
-                            decimalFormat.format(hero.getPopularity()));
+                    StringBuilder str = new StringBuilder("" + id);
+                    for (int skillBracket = 0; skillBracket < N_SKILL_BRACKETS; ++skillBracket) {
+                        str.append(",").append(decimalFormat.format(hero.getWinRateBracket(skillBracket))).append(",")
+                                .append(decimalFormat.format(hero.getPopularityBracket(skillBracket)));
+                    }
+                    bw.write(str.toString());
                     bw.newLine();
                 }
             }
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void setMMRBracket(int bracket) {
+        this.mmrBracket = bracket;
+        for (Hero hero : heroes) {
+            if (hero != null)
+                hero.setBracket(bracket);
         }
     }
 
