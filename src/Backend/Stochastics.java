@@ -8,7 +8,7 @@ public class Stochastics {
         double invProd = 1;
         for (double wr : winRates) {
             prod *= wr;
-            invProd *= 1 / wr;
+            invProd *= 1 - wr;
         }
         return prod / (prod + invProd);
     }
@@ -18,7 +18,7 @@ public class Stochastics {
         double invProd = 1;
         for (double wr : winRates) {
             prod *= wr;
-            invProd *= 1 / wr;
+            invProd *= 1 - wr;
         }
         return prod / (prod + invProd);
     }
