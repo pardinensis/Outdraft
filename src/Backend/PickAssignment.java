@@ -1,6 +1,7 @@
 package Backend;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class PickAssignment {
     private Hero[] heroes;
@@ -22,37 +23,28 @@ public class PickAssignment {
     }
 
     private double rate() {
-        double product = 1;
-        double productInv = 1;
+        ArrayList<Double> ratings = new ArrayList<>();
         for (int position = 0; position < 5; ++position) {
             boolean heroSet = heroes[position] != null;
             boolean playerSet = players[position] != null;
 
             if (heroSet) {
-                double addend = heroes[position].getPositionAddend(position) * HERO_POSITION_FACTOR;
-                product *= 0.5 + addend;
-                productInv *= 0.5 - addend;
+                ratings.add(heroes[position].getPositionAddend(position) * HERO_POSITION_FACTOR + 0.5);
             }
 
             if (playerSet) {
-                double addend = players[position].getPositionAddend(position) * PLAYER_POSITION_FACTOR;
-                product *= 0.5 + addend;
-                productInv *= 0.5 - addend;
+                ratings.add(players[position].getPositionAddend(position) * PLAYER_POSITION_FACTOR + 0.5);
             }
 
             if (heroSet && playerSet) {
-                double addend = players[position].getWinRateAddend(heroes[position]) * PLAYER_HERO_FACTOR;
-                product *= 0.5 + addend;
-                productInv *= 0.5 - addend;
+                ratings.add(players[position].getWinRateAddend(heroes[position]) * PLAYER_HERO_FACTOR + 0.5);
             }
 
             if (heroSet && !playerSet) {
-                double addend = heroes[position].getPopularityWinRateAddend() * HERO_POPULARITY_FACTOR;
-                product *= 0.5 + addend;
-                productInv *= 0.5 - addend;
+                ratings.add(heroes[position].getPopularityWinRateAddend() * HERO_POPULARITY_FACTOR + 0.5);
             }
         }
-        return product / (product + productInv);
+        return Stochastics.combine(ratings);
     }
 
     public double getRating() {

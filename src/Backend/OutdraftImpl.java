@@ -1,5 +1,7 @@
 package Backend;
 
+import UI.Pair;
+
 import java.util.*;
 
 public class OutdraftImpl implements Outdraft {
@@ -31,7 +33,7 @@ public class OutdraftImpl implements Outdraft {
         undoMoves = new LinkedList<>();
 
         playerAssignments = new Player[5];
-        playerAssignmentOrder = new LinkedList<Integer>();
+        playerAssignmentOrder = new LinkedList<>();
         positionAssignments = new int[] { -1, -1, -1, -1, -1 };
 
         draft = new Draft();
@@ -82,8 +84,6 @@ public class OutdraftImpl implements Outdraft {
             playerAssignmentOrder.remove(4);
         }
         playerAssignmentOrder.add(0, pickId);
-
-        System.out.println(playerAssignmentOrder);
     }
 
     @Override
@@ -101,6 +101,27 @@ public class OutdraftImpl implements Outdraft {
             }
         }
         positionAssignments[pickId] = position;
+    }
+
+    public ArrayList<Pair<Pair<Hero, Hero>, Double>> getOpeners() {
+        ArrayList<Pair<Pair<Hero, Hero>, Double>> heroPairs = new ArrayList<>();
+        for (Hero hero1 : availableHeroes) {
+            for (Hero hero2 : availableHeroes) {
+                if (hero1 == hero2)
+                    break;
+
+                Draft draft = new Draft();
+                draft.addOwnHero(hero1);
+                draft.addOwnHero(hero2);
+                ArrayList<Hero> heroes = new ArrayList<>(Arrays.asList(hero1, hero2));
+                PickAssignment pa = chooseBestPickAssignment(heroes, team);
+                double winRate = Stochastics.combine(pa.getRating(), draft.calculateExpectedWinRate());
+                heroPairs.add(new Pair<>(new Pair<>(hero1, hero2), winRate));
+            }
+        }
+
+        heroPairs.sort((Pair<Pair<Hero, Hero>, Double> lhs, Pair<Pair<Hero, Hero>, Double> rhs) -> Double.compare(rhs.b, lhs.b));
+        return heroPairs;
     }
 
     @Override
@@ -139,6 +160,12 @@ public class OutdraftImpl implements Outdraft {
            draft.removeOwnHero(hero);
            availableHeroes.add(hero);
         });
+
+//        ArrayList<Pair<Pair<Hero, Hero>, Double>> openers = getOpeners();
+//        for (int i = 0; i < 10; ++i) {
+//            Pair<Pair<Hero, Hero>, Double> opener = openers.get(i);
+//            System.out.println(opener.a.a.getName() + " + " + opener.a.b.getName() + " (" + opener.b + ")");
+//        }
     }
 
     @Override

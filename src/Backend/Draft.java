@@ -46,35 +46,27 @@ public class Draft {
     }
 
     public double calculateIndependentWinRate() {
-        double winRateProduct = 1;
-        double winRateProductInv = 1;
+        ArrayList<Double> ratings = new ArrayList<>();
 
         for (Hero j : ownHeroes) {
-            double winRate = j.getWinRate();
-            winRateProduct *= winRate;
-            winRateProductInv *= 1 - winRate;
+            ratings.add(j.getWinRate());
         }
 
         for (Hero j : enemyHeroes) {
-            double winRate = j.getWinRate();
-            winRateProduct *= 1 - winRate;
-            winRateProductInv *= winRate;
+            ratings.add(j.getWinRate());
         }
 
-        return winRateProduct / (winRateProduct + winRateProductInv);
+        return Stochastics.combine(ratings);
     }
 
     public double calculateExpectedWinRate() {
-        double winRateProduct = 1;
-        double winRateProductInv = 1;
+        ArrayList<Double> ratings = new ArrayList<>();
 
         // rate own synergy
         for (Hero j : ownHeroes) {
             for (Hero k : ownHeroes) {
                 if (j.getId() < k.getId()) {
-                    double winRate = j.getWinRateWith(k.getId());
-                    winRateProduct *= winRate;
-                    winRateProductInv *= 1 - winRate;
+                    ratings.add(j.getWinRateWith(k.getId()));
                 }
             }
         }
@@ -83,9 +75,7 @@ public class Draft {
         for (Hero j : enemyHeroes) {
             for (Hero k : enemyHeroes) {
                 if (j.getId() < k.getId()) {
-                    double winRate = j.getWinRateWith(k.getId());
-                    winRateProduct *= 1 - winRate;
-                    winRateProductInv *= winRate;
+                    ratings.add(j.getWinRateWith(k.getId()));
                 }
             }
         }
@@ -93,11 +83,12 @@ public class Draft {
         // rate matchups
         for (Hero j : ownHeroes) {
             for (Hero k : enemyHeroes) {
-                double winRate = j.getWinRateAgainst(k.getId());
-                winRateProduct *= winRate;
-                winRateProductInv *= 1 - winRate;
+                ratings.add(j.getWinRateAgainst(k.getId()));
             }
         }
+
+        double winRateProduct = Stochastics.combine(ratings);
+        double winRateProductInv = 1 - winRateProduct;
 
         // normalize hero win rates
         int n = ownHeroes.size() + enemyHeroes.size();
