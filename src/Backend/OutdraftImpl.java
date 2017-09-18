@@ -14,6 +14,7 @@ public class OutdraftImpl implements Outdraft {
     private LinkedList<Runnable> undoMoves;
 
     private Player[] playerAssignments;
+    private LinkedList<Integer> playerAssignmentOrder;
     private int[] positionAssignments;
 
     public OutdraftImpl() {
@@ -30,6 +31,7 @@ public class OutdraftImpl implements Outdraft {
         undoMoves = new LinkedList<>();
 
         playerAssignments = new Player[5];
+        playerAssignmentOrder = new LinkedList<Integer>();
         positionAssignments = new int[] { -1, -1, -1, -1, -1 };
 
         draft = new Draft();
@@ -40,14 +42,48 @@ public class OutdraftImpl implements Outdraft {
     @Override
     public void setPlayerAssignment(int pickId, Player player) {
         if (player != null) {
-            for (int i = 0; i < 5; ++i) {
-                if (playerAssignments[i] != null && playerAssignments[i].getName().equals(player.getName())) {
-                    playerAssignments[i] = null;
+            if (player == Player.RANDOM_PLAYER) {
+                int nRandoms = 5 - team.getActivePlayers().size();
+                int nRandomsSet = 0;
+                for (int j = 0; j < 5; ++j) {
+                    if (playerAssignments[j] == Player.RANDOM_PLAYER) {
+                        ++nRandomsSet;
+                    }
+                }
+                if (nRandomsSet >= nRandoms) {
+                    Iterator<Integer> it = playerAssignmentOrder.descendingIterator();
+                    while (it.hasNext()) {
+                        int pickIdIt = it.next();
+                        if (playerAssignments[pickIdIt] == Player.RANDOM_PLAYER) {
+                            playerAssignments[pickIdIt] = null;
+                            break;
+                        }
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < 5; ++i) {
+                    if (playerAssignments[i] == player) {
+                        playerAssignments[i] = null;
+                        break;
+                    }
                 }
             }
         }
 
         playerAssignments[pickId] = player;
+        for (int i = 0; i < playerAssignmentOrder.size(); ++i) {
+            if (playerAssignmentOrder.get(i) == pickId) {
+                playerAssignmentOrder.remove(i);
+                break;
+            }
+        }
+        if (playerAssignmentOrder.size() > 4) {
+            playerAssignmentOrder.remove(4);
+        }
+        playerAssignmentOrder.add(0, pickId);
+
+        System.out.println(playerAssignmentOrder);
     }
 
     @Override
